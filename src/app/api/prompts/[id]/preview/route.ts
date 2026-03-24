@@ -3,10 +3,7 @@ import { db } from '@/lib/db'
 import { NotFoundError } from '@/lib/errors'
 import { handleApiError } from '@/app/api/_helpers/error-handler'
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
 

@@ -25,7 +25,14 @@ export async function logAction(context: AuditContext) {
 
 export async function getAuditLog(
   filters: AuditFilters,
-): Promise<PaginatedResult<AuditLog & { user: { id: string; name: string | null; email: string } | null; prompt: { id: string; title: string } | null }>> {
+): Promise<
+  PaginatedResult<
+    AuditLog & {
+      user: { id: string; name: string | null; email: string } | null
+      prompt: { id: string; title: string } | null
+    }
+  >
+> {
   const page = filters.page ?? 1
   const limit = filters.limit ?? ITEMS_PER_PAGE
   const where: Record<string, unknown> = {}

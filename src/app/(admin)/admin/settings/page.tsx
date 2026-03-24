@@ -1,27 +1,25 @@
 export default function SettingsPage() {
   const envInfo = [
     {
-      label: "NODE_ENV",
-      value: process.env.NODE_ENV ?? "not set",
+      label: 'NODE_ENV',
+      value: process.env.NODE_ENV ?? 'not set',
     },
     {
-      label: "AD_PROVIDER",
-      value: process.env.AD_PROVIDER ?? "not set",
+      label: 'AD_PROVIDER',
+      value: process.env.AD_PROVIDER ?? 'not set',
     },
     {
-      label: "STORAGE_PROVIDER",
-      value: process.env.STORAGE_PROVIDER ?? "not set",
+      label: 'STORAGE_PROVIDER',
+      value: process.env.STORAGE_PROVIDER ?? 'not set',
     },
-  ];
+  ]
 
   return (
     <div className="max-w-2xl">
       <h1 className="text-2xl font-bold mb-6">System Settings</h1>
 
       <div className="rounded-lg border border-border bg-muted/30 p-6 mb-8 text-center">
-        <p className="text-muted-foreground">
-          Settings configuration coming soon.
-        </p>
+        <p className="text-muted-foreground">Settings configuration coming soon.</p>
       </div>
 
       <section>
@@ -41,5 +39,5 @@ export default function SettingsPage() {
         </div>
       </section>
     </div>
-  );
+  )
 }

@@ -135,6 +135,7 @@ model Prompt {
   status      PromptStatus @default(DRAFT)
   categoryId  String
   content     String       @db.Text
+  thumbnailUrl String?     @db.Text
   metadata    Json?
   unlockCount Int          @default(0)
   viewCount   Int          @default(0)

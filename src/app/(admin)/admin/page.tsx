@@ -1,6 +1,6 @@
-import { db } from "@/lib/db";
-import { StatsCards } from "@/components/admin/stats-cards";
-import { RecentActivity } from "@/components/admin/recent-activity";
+import { db } from '@/lib/db'
+import { StatsCards } from '@/components/admin/stats-cards'
+import { RecentActivity } from '@/components/admin/recent-activity'
 
 export default async function AdminDashboardPage() {
   const [
@@ -12,23 +12,21 @@ export default async function AdminDashboardPage() {
     recentAuditEntries,
   ] = await Promise.all([
     db.prompt.count(),
-    db.prompt.count({ where: { status: "PUBLISHED" } }),
-    db.prompt.count({ where: { status: "PENDING_REVIEW" } }),
-    db.prompt
-      .aggregate({ _sum: { unlockCount: true } })
-      .then((r) => r._sum.unlockCount ?? 0),
+    db.prompt.count({ where: { status: 'PUBLISHED' } }),
+    db.prompt.count({ where: { status: 'PENDING_REVIEW' } }),
+    db.prompt.aggregate({ _sum: { unlockCount: true } }).then((r) => r._sum.unlockCount ?? 0),
     db.agentRun.count({
       where: { createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } },
     }),
     db.auditLog.findMany({
       take: 10,
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       include: {
         user: { select: { id: true, name: true, email: true } },
         prompt: { select: { id: true, title: true } },
       },
     }),
-  ]);
+  ])
 
   const stats = {
     totalPrompts,
@@ -36,7 +34,7 @@ export default async function AdminDashboardPage() {
     pendingReview: pendingReviewCount,
     totalUnlocks,
     agentRuns: recentAgentRuns,
-  };
+  }
 
   return (
     <div>
@@ -49,5 +47,5 @@ export default async function AdminDashboardPage() {
         <RecentActivity entries={recentAuditEntries} />
       </div>
     </div>
-  );
+  )
 }

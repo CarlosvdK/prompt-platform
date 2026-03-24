@@ -8,10 +8,7 @@ const requestChangesBodySchema = z.object({
   notes: z.string().min(10).max(5000),
 })
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await requireRole(['REVIEWER', 'ADMIN'])
     const { id } = await params

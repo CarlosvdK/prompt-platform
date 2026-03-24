@@ -3,12 +3,7 @@
 import Link from 'next/link'
 import { publicNavItems } from '@/config/navigation'
 import { siteConfig } from '@/config/site'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 
 interface MobileNavProps {
   open: boolean

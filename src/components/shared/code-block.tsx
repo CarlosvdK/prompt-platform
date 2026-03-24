@@ -12,13 +12,11 @@ export function CodeBlock({ code, language, className }: CodeBlockProps) {
     <div
       className={cn(
         'group relative overflow-hidden rounded-lg border bg-zinc-950 dark:bg-zinc-900',
-        className
+        className,
       )}
     >
       <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2">
-        {language && (
-          <span className="text-xs text-zinc-400">{language}</span>
-        )}
+        {language && <span className="text-xs text-zinc-400">{language}</span>}
         {!language && <span />}
         <CopyButton
           text={code}

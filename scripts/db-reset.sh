@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # =============================================================================
-# Prompt Platform - Database Reset
+# Softset - Database Reset
 # =============================================================================
 # Drops and recreates the database, runs migrations, and seeds data.
 # WARNING: This destroys all data in the local database.

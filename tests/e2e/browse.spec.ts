@@ -11,8 +11,10 @@ test.describe('Browse prompts', () => {
     // Expect at least one prompt card if seeded
     const cards = page.locator('[data-testid="prompt-card"]')
     // This will pass with seed data
-    await expect(cards.first()).toBeVisible({ timeout: 10000 }).catch(() => {
-      // No seed data - that's ok for initial scaffold
-    })
+    await expect(cards.first())
+      .toBeVisible({ timeout: 10000 })
+      .catch(() => {
+        // No seed data - that's ok for initial scaffold
+      })
   })
 })

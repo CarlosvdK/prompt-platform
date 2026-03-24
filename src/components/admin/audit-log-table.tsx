@@ -64,9 +64,7 @@ export function AuditLogTable({
             </option>
           ))}
         </Select>
-        <p className="text-sm text-muted-foreground">
-          {total} total entries
-        </p>
+        <p className="text-sm text-muted-foreground">{total} total entries</p>
       </div>
 
       <div className="overflow-x-auto rounded-lg border">
@@ -82,23 +80,19 @@ export function AuditLogTable({
           </thead>
           <tbody>
             {entries.map((entry) => (
-              <tr
-                key={entry.id}
-                className="border-b transition-colors hover:bg-muted/30"
-              >
+              <tr key={entry.id} className="border-b transition-colors hover:bg-muted/30">
                 <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
                   {formatDate(new Date(entry.createdAt))}
                 </td>
-                <td className="px-4 py-3">
-                  {entry.user?.name ?? entry.user?.email ?? 'System'}
-                </td>
+                <td className="px-4 py-3">{entry.user?.name ?? entry.user?.email ?? 'System'}</td>
                 <td className="px-4 py-3">
                   <span className="inline-flex rounded-md bg-muted px-2 py-0.5 text-xs font-medium">
                     {entry.action}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">
-                  {entry.prompt?.title ?? (entry.promptId ? `Prompt (${entry.promptId.slice(0, 8)})` : '-')}
+                  {entry.prompt?.title ??
+                    (entry.promptId ? `Prompt (${entry.promptId.slice(0, 8)})` : '-')}
                 </td>
                 <td className="max-w-xs truncate px-4 py-3 text-muted-foreground">
                   {entry.details ? JSON.stringify(entry.details) : '-'}
@@ -107,10 +101,7 @@ export function AuditLogTable({
             ))}
             {entries.length === 0 && (
               <tr>
-                <td
-                  colSpan={5}
-                  className="px-4 py-8 text-center text-muted-foreground"
-                >
+                <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
                   No audit log entries found.
                 </td>
               </tr>
@@ -119,9 +110,7 @@ export function AuditLogTable({
         </table>
       </div>
 
-      {totalPages > 1 && (
-        <Pagination page={page} totalPages={totalPages} />
-      )}
+      {totalPages > 1 && <Pagination page={page} totalPages={totalPages} />}
     </div>
   )
 }

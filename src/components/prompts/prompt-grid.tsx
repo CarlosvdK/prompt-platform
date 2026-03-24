@@ -1,7 +1,7 @@
+'use client'
+
 import type { PromptSummary } from '@/types/prompt'
 import { PromptCard } from './prompt-card'
-import { EmptyState } from '@/components/shared/empty-state'
-import { FileText } from 'lucide-react'
 
 interface PromptGridProps {
   prompts: PromptSummary[]
@@ -10,16 +10,14 @@ interface PromptGridProps {
 export function PromptGrid({ prompts }: PromptGridProps) {
   if (prompts.length === 0) {
     return (
-      <EmptyState
-        title="No prompts found"
-        description="Try adjusting your filters or search terms."
-        icon={FileText}
-      />
+      <div className="flex items-center justify-center py-24">
+        <p className="text-sm text-muted-foreground">No prompts found.</p>
+      </div>
     )
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
       {prompts.map((prompt) => (
         <PromptCard key={prompt.id} prompt={prompt} />
       ))}

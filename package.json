@@ -1,5 +1,5 @@
 {
-  "name": "prompt-platform",
+  "name": "softset",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -17,9 +17,11 @@
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "db:reset": "bash scripts/db-reset.sh",
+    "generate:prompts": "tsx scripts/generate-prompts.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
     "@auth/prisma-adapter": "^2.11.1",
     "@prisma/client": "^6.19.2",
     "@tanstack/react-query": "^5.95.1",
@@ -34,6 +36,12 @@
     "react-dom": "19.2.4",
     "tailwind-merge": "^3.5.0",
     "zod": "^4.3.6"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "sharp",
+      "unrs-resolver"
+    ]
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

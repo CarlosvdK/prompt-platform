@@ -1,6 +1,6 @@
 export const siteConfig = {
-  name: 'PromptPlatform',
-  description: 'Discover, preview, and unlock high-quality AI prompts for every use case.',
+  name: 'Softset',
+  description: 'Discover, preview, and unlock high-quality UI component prompts.',
   url: process.env.APP_URL || 'http://localhost:3000',
   ogImage: '/og-image.png',
   links: {

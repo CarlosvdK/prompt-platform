@@ -1,4 +1,4 @@
-# CLAUDE.md - AI Agent Instructions for Prompt Platform
+# CLAUDE.md - AI Agent Instructions for Softset
 
 ## Before You Start
 

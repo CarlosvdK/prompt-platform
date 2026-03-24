@@ -3,10 +3,7 @@ import { requireRole } from '@/lib/auth'
 import { reviewPrompt } from '@/services/review.service'
 import { handleApiError } from '@/app/api/_helpers/error-handler'
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await requireRole(['REVIEWER', 'ADMIN'])
     const { id } = await params

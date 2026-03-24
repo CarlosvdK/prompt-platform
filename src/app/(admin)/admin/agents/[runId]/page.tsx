@@ -1,24 +1,22 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { getRunStatus } from "@/services/agent.service";
-import { StatusBadge } from "@/components/shared/status-badge";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import { getRunStatus } from '@/services/agent.service'
+import { StatusBadge } from '@/components/shared/status-badge'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface AgentRunDetailPageProps {
-  params: Promise<{ runId: string }>;
+  params: Promise<{ runId: string }>
 }
 
-export default async function AgentRunDetailPage({
-  params,
-}: AgentRunDetailPageProps) {
-  const { runId } = await params;
+export default async function AgentRunDetailPage({ params }: AgentRunDetailPageProps) {
+  const { runId } = await params
 
-  let run;
+  let run
   try {
-    run = await getRunStatus(runId);
+    run = await getRunStatus(runId)
   } catch {
-    notFound();
+    notFound()
   }
 
   return (
@@ -37,24 +35,21 @@ export default async function AgentRunDetailPage({
           <span className="text-muted-foreground">Status:</span> {run.status}
         </div>
         <div>
-          <span className="text-muted-foreground">Created:</span>{" "}
+          <span className="text-muted-foreground">Created:</span>{' '}
           {new Date(run.createdAt).toLocaleString()}
         </div>
         <div>
-          <span className="text-muted-foreground">Completed:</span>{" "}
-          {run.completedAt
-            ? new Date(run.completedAt).toLocaleString()
-            : "In progress"}
+          <span className="text-muted-foreground">Completed:</span>{' '}
+          {run.completedAt ? new Date(run.completedAt).toLocaleString() : 'In progress'}
         </div>
         {run.initiator && (
           <div>
-            <span className="text-muted-foreground">Initiated by:</span>{" "}
-            {run.initiator.name ?? "Unknown"}
+            <span className="text-muted-foreground">Initiated by:</span>{' '}
+            {run.initiator.name ?? 'Unknown'}
           </div>
         )}
         <div>
-          <span className="text-muted-foreground">Drafts:</span>{" "}
-          {run.draftCount}
+          <span className="text-muted-foreground">Drafts:</span> {run.draftCount}
         </div>
       </div>
 
@@ -116,5 +111,5 @@ export default async function AgentRunDetailPage({
         </section>
       )}
     </div>
-  );
+  )
 }

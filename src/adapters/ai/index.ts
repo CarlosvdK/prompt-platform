@@ -1,5 +1,6 @@
 import { AIProvider } from './ai-provider.interface'
 import { MockAIAdapter } from './mock-ai.adapter'
+import { AnthropicAdapter } from './anthropic.adapter'
 
 export function getAIProvider(): AIProvider {
   const provider = process.env.AI_PROVIDER ?? 'mock'
@@ -7,6 +8,8 @@ export function getAIProvider(): AIProvider {
   switch (provider) {
     case 'mock':
       return new MockAIAdapter()
+    case 'anthropic':
+      return new AnthropicAdapter()
     default:
       throw new Error(`Unknown AI provider: ${provider}`)
   }

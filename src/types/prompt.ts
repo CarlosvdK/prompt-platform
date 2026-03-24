@@ -1,5 +1,15 @@
 import { PromptStatus, PromptType } from '@prisma/client'
 
+export type PreviewType =
+  | 'thumbnail'
+  | 'screenshot'
+  | 'animation'
+  | 'video'
+  | 'code_render'
+  | 'text_excerpt'
+  | 'code_snippet'
+  | 'output_sample'
+
 export interface PromptSummary {
   id: string
   title: string
@@ -7,6 +17,7 @@ export interface PromptSummary {
   description: string
   type: PromptType
   status: PromptStatus
+  thumbnailUrl: string | null
   category: { id: string; name: string; slug: string }
   tags: { id: string; name: string; slug: string }[]
   viewCount: number

@@ -1,29 +1,24 @@
-import { db } from "@/lib/db";
-import { StatsCards } from "@/components/admin/stats-cards";
+import { db } from '@/lib/db'
+import { StatsCards } from '@/components/admin/stats-cards'
 
 export default async function AnalyticsPage() {
-  const [totalUnlocks, totalViews, publishedCount, topPrompts] =
-    await Promise.all([
-      db.prompt
-        .aggregate({ _sum: { unlockCount: true } })
-        .then((r) => r._sum.unlockCount ?? 0),
-      db.prompt
-        .aggregate({ _sum: { viewCount: true } })
-        .then((r) => r._sum.viewCount ?? 0),
-      db.prompt.count({ where: { status: "PUBLISHED" } }),
-      db.prompt.findMany({
-        where: { status: "PUBLISHED" },
-        orderBy: { unlockCount: "desc" },
-        take: 5,
-        select: { id: true, title: true, unlockCount: true, viewCount: true },
-      }),
-    ]);
+  const [totalUnlocks, totalViews, publishedCount, topPrompts] = await Promise.all([
+    db.prompt.aggregate({ _sum: { unlockCount: true } }).then((r) => r._sum.unlockCount ?? 0),
+    db.prompt.aggregate({ _sum: { viewCount: true } }).then((r) => r._sum.viewCount ?? 0),
+    db.prompt.count({ where: { status: 'PUBLISHED' } }),
+    db.prompt.findMany({
+      where: { status: 'PUBLISHED' },
+      orderBy: { unlockCount: 'desc' },
+      take: 5,
+      select: { id: true, title: true, unlockCount: true, viewCount: true },
+    }),
+  ])
 
   const stats = {
     totalUnlocks,
     published: publishedCount,
     totalPrompts: publishedCount,
-  };
+  }
 
   return (
     <div>
@@ -50,12 +45,8 @@ export default async function AnalyticsPage() {
                 {topPrompts.map((p) => (
                   <tr key={p.id} className="hover:bg-muted/50">
                     <td className="px-4 py-3 font-medium">{p.title}</td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {p.unlockCount}
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {p.viewCount}
-                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">{p.unlockCount}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{p.viewCount}</td>
                   </tr>
                 ))}
               </tbody>
@@ -65,10 +56,8 @@ export default async function AnalyticsPage() {
       </div>
 
       <div className="mt-8 rounded-lg border border-border bg-muted/30 p-6 text-center">
-        <p className="text-muted-foreground">
-          Full analytics dashboard coming soon.
-        </p>
+        <p className="text-muted-foreground">Full analytics dashboard coming soon.</p>
       </div>
     </div>
-  );
+  )
 }

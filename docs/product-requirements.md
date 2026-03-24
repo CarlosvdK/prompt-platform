@@ -2,7 +2,7 @@
 
 ## Product Vision
 
-Prompt Platform is a curated marketplace for AI prompts. Users discover, preview, and unlock high-quality prompts through an ad-gated access model. The platform combines AI-powered content generation with human editorial oversight to maintain a trustworthy, high-quality catalog.
+Softset is a curated marketplace for AI prompts. Users discover, preview, and unlock high-quality prompts through an ad-gated access model. The platform combines AI-powered content generation with human editorial oversight to maintain a trustworthy, high-quality catalog.
 
 ## Target Users
 

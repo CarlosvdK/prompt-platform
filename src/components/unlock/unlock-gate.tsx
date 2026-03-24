@@ -14,8 +14,7 @@ interface UnlockGateProps {
 }
 
 export function UnlockGate({ promptId, children }: UnlockGateProps) {
-  const { state, content, error, session, initiateUnlock, completeAd } =
-    useUnlock()
+  const { state, content, error, session, initiateUnlock, completeAd } = useUnlock()
 
   if (state === 'unlocked' && content) {
     return (
@@ -60,9 +59,7 @@ export function UnlockGate({ promptId, children }: UnlockGateProps) {
           </p>
         </div>
 
-        {error && (
-          <p className="text-sm text-destructive">{error}</p>
-        )}
+        {error && <p className="text-sm text-destructive">{error}</p>}
 
         <Button
           size="lg"

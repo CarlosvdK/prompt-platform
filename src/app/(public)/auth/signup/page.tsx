@@ -1,39 +1,39 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState } from 'react'
+import Link from 'next/link'
 
 export default function SignUpPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+    e.preventDefault()
+    setError('')
+    setLoading(true)
 
     try {
       // TODO: Implement actual registration logic
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
-      });
+      })
 
       if (!res.ok) {
-        const data = await res.json();
-        setError(data.error ?? "Registration failed.");
-        return;
+        const data = await res.json()
+        setError(data.error ?? 'Registration failed.')
+        return
       }
 
-      window.location.href = "/auth/signin";
+      window.location.href = '/auth/signin'
     } catch {
-      setError("An unexpected error occurred.");
+      setError('An unexpected error occurred.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -50,10 +50,7 @@ export default function SignUpPage() {
           )}
 
           <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium mb-1.5"
-            >
+            <label htmlFor="name" className="block text-sm font-medium mb-1.5">
               Name
             </label>
             <input
@@ -68,10 +65,7 @@ export default function SignUpPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium mb-1.5"
-            >
+            <label htmlFor="email" className="block text-sm font-medium mb-1.5">
               Email
             </label>
             <input
@@ -86,10 +80,7 @@ export default function SignUpPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium mb-1.5"
-            >
+            <label htmlFor="password" className="block text-sm font-medium mb-1.5">
               Password
             </label>
             <input
@@ -109,20 +100,17 @@ export default function SignUpPage() {
             disabled={loading}
             className="w-full h-10 rounded-lg bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
           >
-            {loading ? "Creating account..." : "Sign Up"}
+            {loading ? 'Creating account...' : 'Sign Up'}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <Link
-            href="/auth/signin"
-            className="font-medium text-foreground hover:underline"
-          >
+          Already have an account?{' '}
+          <Link href="/auth/signin" className="font-medium text-foreground hover:underline">
             Sign in
           </Link>
         </p>
       </div>
     </div>
-  );
+  )
 }

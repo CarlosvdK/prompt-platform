@@ -30,9 +30,7 @@ export function AdContainer({ sessionId, adConfig, onComplete }: AdContainerProp
   return (
     <div className="mx-auto max-w-md space-y-4 rounded-lg border bg-muted/30 p-6 text-center">
       <div className="space-y-2">
-        <p className="text-sm font-medium text-muted-foreground">
-          Ad playing...
-        </p>
+        <p className="text-sm font-medium text-muted-foreground">Ad playing...</p>
         <p className="text-2xl font-bold tabular-nums">{secondsLeft}s</p>
       </div>
 
@@ -44,9 +42,7 @@ export function AdContainer({ sessionId, adConfig, onComplete }: AdContainerProp
       </div>
 
       <div className="flex h-40 items-center justify-center rounded-md border border-dashed bg-muted/50">
-        <p className="text-sm text-muted-foreground">
-          [Ad Content Placeholder]
-        </p>
+        <p className="text-sm text-muted-foreground">[Ad Content Placeholder]</p>
       </div>
 
       <p className="text-xs text-muted-foreground">

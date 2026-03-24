@@ -1,22 +1,18 @@
-import { redirect } from "next/navigation";
-import { getServerAuth } from "@/lib/auth";
-import { AdminSidebar } from "@/components/layout/admin-sidebar";
-import { AdminHeader } from "@/components/layout/admin-header";
+import { redirect } from 'next/navigation'
+import { getServerAuth } from '@/lib/auth'
+import { AdminSidebar } from '@/components/layout/admin-sidebar'
+import { AdminHeader } from '@/components/layout/admin-header'
 
-export default async function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const session = await getServerAuth();
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const session = await getServerAuth()
 
   if (!session?.user) {
-    redirect("/auth/signin");
+    redirect('/auth/signin')
   }
 
-  const role = (session.user as { role?: string }).role;
-  if (role !== "ADMIN" && role !== "REVIEWER") {
-    redirect("/auth/signin");
+  const role = (session.user as { role?: string }).role
+  if (role !== 'ADMIN' && role !== 'REVIEWER') {
+    redirect('/auth/signin')
   }
 
   return (
@@ -31,5 +27,5 @@ export default async function AdminLayout({
         <main className="flex-1 overflow-auto p-6">{children}</main>
       </div>
     </div>
-  );
+  )
 }

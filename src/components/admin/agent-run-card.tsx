@@ -1,12 +1,7 @@
 import Link from 'next/link'
 import { Bot, AlertCircle } from 'lucide-react'
 import type { AgentRunSummary } from '@/types/agent'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/utils'
 
@@ -31,10 +26,7 @@ export function AgentRunCard({ run }: AgentRunCardProps) {
               <Bot className="h-4 w-4" />
               {run.skill}
             </CardTitle>
-            <Badge
-              variant="secondary"
-              className={statusColors[run.status] ?? ''}
-            >
+            <Badge variant="secondary" className={statusColors[run.status] ?? ''}>
               {run.status}
             </Badge>
           </div>

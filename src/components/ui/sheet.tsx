@@ -27,11 +27,7 @@ function Sheet({
   const open = controlledOpen ?? uncontrolledOpen
   const setOpen = onOpenChange ?? setUncontrolledOpen
 
-  return (
-    <SheetContext.Provider value={{ open, setOpen }}>
-      {children}
-    </SheetContext.Provider>
-  )
+  return <SheetContext.Provider value={{ open, setOpen }}>{children}</SheetContext.Provider>
 }
 
 function SheetTrigger({
@@ -41,12 +37,7 @@ function SheetTrigger({
 }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const { setOpen } = React.useContext(SheetContext)
   return (
-    <button
-      type="button"
-      className={className}
-      onClick={() => setOpen(true)}
-      {...props}
-    >
+    <button type="button" className={className} onClick={() => setOpen(true)} {...props}>
       {children}
     </button>
   )
@@ -78,15 +69,12 @@ function SheetContent({
 
   return (
     <>
-      <div
-        className="fixed inset-0 z-50 bg-black/50"
-        onClick={() => setOpen(false)}
-      />
+      <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setOpen(false)} />
       <div
         className={cn(
           'fixed inset-y-0 z-50 flex w-72 flex-col bg-background p-6 shadow-lg transition-transform',
           side === 'left' ? 'left-0' : 'right-0',
-          className
+          className,
         )}
       >
         <button
@@ -103,28 +91,14 @@ function SheetContent({
   )
 }
 
-function SheetHeader({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+function SheetHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div
-      className={cn('flex flex-col space-y-2 text-center sm:text-left', className)}
-      {...props}
-    />
+    <div className={cn('flex flex-col space-y-2 text-center sm:text-left', className)} {...props} />
   )
 }
 
-function SheetTitle({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLHeadingElement>) {
-  return (
-    <h2
-      className={cn('text-lg font-semibold text-foreground', className)}
-      {...props}
-    />
-  )
+function SheetTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+  return <h2 className={cn('text-lg font-semibold text-foreground', className)} {...props} />
 }
 
 export { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle }

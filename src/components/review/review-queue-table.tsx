@@ -14,12 +14,7 @@ interface ReviewQueueTableProps {
   totalPages: number
 }
 
-export function ReviewQueueTable({
-  items,
-  total,
-  page,
-  totalPages,
-}: ReviewQueueTableProps) {
+export function ReviewQueueTable({ items, total, page, totalPages }: ReviewQueueTableProps) {
   return (
     <div className="space-y-4">
       <div className="overflow-x-auto rounded-lg border">
@@ -36,24 +31,16 @@ export function ReviewQueueTable({
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr
-                key={item.id}
-                className="border-b transition-colors hover:bg-muted/30"
-              >
+              <tr key={item.id} className="border-b transition-colors hover:bg-muted/30">
                 <td className="px-4 py-3">
-                  <Link
-                    href={`/admin/review/${item.id}`}
-                    className="font-medium hover:underline"
-                  >
+                  <Link href={`/admin/review/${item.id}`} className="font-medium hover:underline">
                     {item.title}
                   </Link>
                 </td>
                 <td className="px-4 py-3">
                   <Badge variant="outline">{item.type}</Badge>
                 </td>
-                <td className="px-4 py-3 text-muted-foreground">
-                  {item.category.name}
-                </td>
+                <td className="px-4 py-3 text-muted-foreground">{item.category.name}</td>
                 <td className="px-4 py-3">
                   <StatusBadge status={item.status} />
                 </td>
@@ -61,10 +48,7 @@ export function ReviewQueueTable({
                   {formatDate(new Date(item.createdAt))}
                 </td>
                 <td className="px-4 py-3">
-                  <Link
-                    href={`/admin/review/${item.id}`}
-                    className="text-primary hover:underline"
-                  >
+                  <Link href={`/admin/review/${item.id}`} className="text-primary hover:underline">
                     Review
                   </Link>
                 </td>
@@ -72,10 +56,7 @@ export function ReviewQueueTable({
             ))}
             {items.length === 0 && (
               <tr>
-                <td
-                  colSpan={6}
-                  className="px-4 py-8 text-center text-muted-foreground"
-                >
+                <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
                   No items in the review queue.
                 </td>
               </tr>
@@ -84,9 +65,7 @@ export function ReviewQueueTable({
         </table>
       </div>
 
-      {totalPages > 1 && (
-        <Pagination page={page} totalPages={totalPages} />
-      )}
+      {totalPages > 1 && <Pagination page={page} totalPages={totalPages} />}
     </div>
   )
 }

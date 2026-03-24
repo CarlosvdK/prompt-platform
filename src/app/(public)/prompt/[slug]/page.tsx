@@ -1,50 +1,48 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { getPromptBySlug } from "@/services/prompt.service";
-import { PromptDetail } from "@/components/prompts/prompt-detail";
-import { PromptPreview } from "@/components/prompts/prompt-preview";
-import { PromptContent } from "@/components/prompts/prompt-content";
-import { UnlockGate } from "@/components/unlock/unlock-gate";
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { getPromptBySlug } from '@/services/prompt.service'
+import { PromptDetail } from '@/components/prompts/prompt-detail'
+import { PromptPreview } from '@/components/prompts/prompt-preview'
+import { PromptContent } from '@/components/prompts/prompt-content'
+import { UnlockGate } from '@/components/unlock/unlock-gate'
 
 interface PromptPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({
-  params,
-}: PromptPageProps): Promise<Metadata> {
-  const { slug } = await params;
+export async function generateMetadata({ params }: PromptPageProps): Promise<Metadata> {
+  const { slug } = await params
 
   try {
-    const prompt = await getPromptBySlug(slug);
-    if (prompt.status !== "PUBLISHED") return { title: "Prompt Not Found" };
+    const prompt = await getPromptBySlug(slug)
+    if (prompt.status !== 'PUBLISHED') return { title: 'Prompt Not Found' }
 
     return {
-      title: `${prompt.title} | PromptPlatform`,
+      title: `${prompt.title} | Softset`,
       description: prompt.description,
       openGraph: {
         title: prompt.title,
         description: prompt.description,
-        type: "article",
+        type: 'article',
       },
-    };
+    }
   } catch {
-    return { title: "Prompt Not Found" };
+    return { title: 'Prompt Not Found' }
   }
 }
 
 export default async function PromptPage({ params }: PromptPageProps) {
-  const { slug } = await params;
+  const { slug } = await params
 
-  let prompt;
+  let prompt
   try {
-    prompt = await getPromptBySlug(slug);
+    prompt = await getPromptBySlug(slug)
   } catch {
-    notFound();
+    notFound()
   }
 
-  if (prompt.status !== "PUBLISHED") {
-    notFound();
+  if (prompt.status !== 'PUBLISHED') {
+    notFound()
   }
 
   return (
@@ -69,5 +67,5 @@ export default async function PromptPage({ params }: PromptPageProps) {
         </UnlockGate>
       </section>
     </div>
-  );
+  )
 }

@@ -29,8 +29,7 @@ export function Footer() {
           </Link>
         </nav>
         <p className="text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} {siteConfig.name}. All rights
-          reserved.
+          &copy; {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
         </p>
       </div>
     </footer>

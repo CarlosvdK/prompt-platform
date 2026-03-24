@@ -21,6 +21,7 @@ const promptSummarySelect = {
   description: true,
   type: true,
   status: true,
+  thumbnailUrl: true,
   viewCount: true,
   unlockCount: true,
   createdAt: true,
@@ -156,9 +157,7 @@ export async function createPrompt(data: CreatePromptInput, userId?: string) {
       type: data.type,
       categoryId: data.categoryId,
       metadata: (data.metadata as Prisma.InputJsonValue) ?? undefined,
-      tags: data.tagIds?.length
-        ? { create: data.tagIds.map((tagId) => ({ tagId })) }
-        : undefined,
+      tags: data.tagIds?.length ? { create: data.tagIds.map((tagId) => ({ tagId })) } : undefined,
       versions: {
         create: {
           version: 1,
@@ -251,11 +250,7 @@ export async function updatePrompt(id: string, data: UpdatePromptInput, userId?:
   return mapTags(prompt)
 }
 
-export async function updatePromptStatus(
-  id: string,
-  newStatus: PromptStatus,
-  userId?: string,
-) {
+export async function updatePromptStatus(id: string, newStatus: PromptStatus, userId?: string) {
   const prompt = await db.prompt.findUnique({
     where: { id },
     select: { id: true, status: true },
@@ -263,9 +258,7 @@ export async function updatePromptStatus(
   if (!prompt) throw new NotFoundError('Prompt')
 
   if (!canTransition(prompt.status, newStatus)) {
-    throw new WorkflowError(
-      `Cannot transition from ${prompt.status} to ${newStatus}`,
-    )
+    throw new WorkflowError(`Cannot transition from ${prompt.status} to ${newStatus}`)
   }
 
   const updateData: Record<string, unknown> = { status: newStatus }

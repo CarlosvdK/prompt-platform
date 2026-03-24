@@ -1,6 +1,6 @@
 # Prompt Authoring Guide
 
-This guide defines how to create high-quality prompt content for the Prompt Platform catalog. It applies to both human authors and AI agents generating prompt drafts.
+This guide defines how to create high-quality prompt content for the Softset catalog. It applies to both human authors and AI agents generating prompt drafts.
 
 ## Prompt Structure
 

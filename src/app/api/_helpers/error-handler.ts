@@ -4,10 +4,7 @@ import { ZodError } from 'zod'
 
 export function handleApiError(error: unknown) {
   if (error instanceof ApiError) {
-    return NextResponse.json(
-      { error: error.message, code: error.code },
-      { status: error.status },
-    )
+    return NextResponse.json({ error: error.message, code: error.code }, { status: error.status })
   }
   if (error instanceof ZodError) {
     return NextResponse.json(
@@ -16,8 +13,5 @@ export function handleApiError(error: unknown) {
     )
   }
   console.error('Unhandled API error:', error)
-  return NextResponse.json(
-    { error: 'Internal server error' },
-    { status: 500 },
-  )
+  return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
 }

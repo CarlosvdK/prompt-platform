@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function PromptDetailLoading() {
   return (
@@ -25,5 +25,5 @@ export default function PromptDetailLoading() {
       <Skeleton className="h-7 w-32 mb-4" />
       <Skeleton className="h-48 w-full rounded-lg" />
     </div>
-  );
+  )
 }

@@ -1,4 +1,4 @@
-# Prompt Platform
+# Softset
 
 A full-stack platform for creating, managing, reviewing, and distributing AI prompts. Users craft prompts through a structured workflow with version control, collaborative review, and an ad-supported unlock model for free access to premium content.
 

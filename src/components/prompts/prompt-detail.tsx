@@ -61,11 +61,7 @@ export function PromptDetail({ prompt, unlockGate }: PromptDetailProps) {
           {prompt.previews
             .sort((a, b) => a.sortOrder - b.sortOrder)
             .map((preview) => (
-              <PromptPreview
-                key={preview.id}
-                type={preview.type}
-                content={preview.content}
-              />
+              <PromptPreview key={preview.id} type={preview.type} content={preview.content} />
             ))}
         </div>
       )}

@@ -4,10 +4,7 @@ import { getPromptById, updatePrompt } from '@/services/prompt.service'
 import { updatePromptSchema } from '@/validations/prompt.schema'
 import { handleApiError } from '@/app/api/_helpers/error-handler'
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
     const prompt = await getPromptById(id)
@@ -28,10 +25,7 @@ export async function GET(
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await requireRole(['ADMIN'])
     const { id } = await params

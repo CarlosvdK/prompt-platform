@@ -27,11 +27,7 @@ function Dialog({
   const open = controlledOpen ?? uncontrolledOpen
   const setOpen = onOpenChange ?? setUncontrolledOpen
 
-  return (
-    <DialogContext.Provider value={{ open, setOpen }}>
-      {children}
-    </DialogContext.Provider>
-  )
+  return <DialogContext.Provider value={{ open, setOpen }}>{children}</DialogContext.Provider>
 }
 
 function DialogTrigger({
@@ -42,24 +38,13 @@ function DialogTrigger({
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { asChild?: boolean }) {
   const { setOpen } = React.useContext(DialogContext)
   return (
-    <button
-      type="button"
-      className={className}
-      onClick={() => setOpen(true)}
-      {...props}
-    >
+    <button type="button" className={className} onClick={() => setOpen(true)} {...props}>
       {children}
     </button>
   )
 }
 
-function DialogContent({
-  children,
-  className,
-}: {
-  children: React.ReactNode
-  className?: string
-}) {
+function DialogContent({ children, className }: { children: React.ReactNode; className?: string }) {
   const { open, setOpen } = React.useContext(DialogContext)
   const dialogRef = React.useRef<HTMLDialogElement>(null)
 
@@ -82,7 +67,7 @@ function DialogContent({
       }}
       className={cn(
         'fixed inset-0 z-50 m-auto max-h-[85vh] w-full max-w-lg rounded-lg border bg-background p-0 shadow-lg backdrop:bg-black/50',
-        className
+        className,
       )}
     >
       <div className="relative p-6">
@@ -100,10 +85,7 @@ function DialogContent({
   )
 }
 
-function DialogHeader({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+function DialogHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn('flex flex-col space-y-1.5 text-center sm:text-left', className)}
@@ -112,37 +94,23 @@ function DialogHeader({
   )
 }
 
-function DialogTitle({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLHeadingElement>) {
+function DialogTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
-    <h2
-      className={cn('text-lg font-semibold leading-none tracking-tight', className)}
-      {...props}
-    />
+    <h2 className={cn('text-lg font-semibold leading-none tracking-tight', className)} {...props} />
   )
 }
 
-function DialogDescription({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) {
-  return (
-    <p
-      className={cn('text-sm text-muted-foreground', className)}
-      {...props}
-    />
-  )
+function DialogDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
+  return <p className={cn('text-sm text-muted-foreground', className)} {...props} />
 }
 
-function DialogFooter({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+function DialogFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 mt-4', className)}
+      className={cn(
+        'flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 mt-4',
+        className,
+      )}
       {...props}
     />
   )

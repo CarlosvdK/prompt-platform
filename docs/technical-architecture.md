@@ -2,7 +2,7 @@
 
 ## System Overview
 
-Prompt Platform is a server-rendered Next.js 15 application using the App Router. It follows a layered architecture: route handlers and server components at the top, a service layer for business logic, adapters for external integrations, and Prisma ORM for database access.
+Softset is a server-rendered Next.js 15 application using the App Router. It follows a layered architecture: route handlers and server components at the top, a service layer for business logic, adapters for external integrations, and Prisma ORM for database access.
 
 The application is deployed as a single service (not microservices). PostgreSQL is the sole data store.
 

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # =============================================================================
-# Prompt Platform - Development Setup
+# Softset - Development Setup
 # =============================================================================
 # This script sets up a fresh development environment. Run it once after
 # cloning the repository.

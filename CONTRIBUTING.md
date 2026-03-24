@@ -1,4 +1,4 @@
-# Contributing to Prompt Platform
+# Contributing to Softset
 
 ## Local Setup
 

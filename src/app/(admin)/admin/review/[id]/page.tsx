@@ -1,30 +1,28 @@
-import { notFound } from "next/navigation";
-import { getPromptById } from "@/services/prompt.service";
-import { getReviewHistory } from "@/services/review.service";
-import { ReviewActions } from "@/components/review/review-actions";
-import { ReviewHistory } from "@/components/review/review-history";
-import { PromptPreview } from "@/components/prompts/prompt-preview";
-import { CodeBlock } from "@/components/shared/code-block";
-import { StatusBadge } from "@/components/shared/status-badge";
-import { PROMPT_TYPE_LABELS } from "@/lib/constants";
+import { notFound } from 'next/navigation'
+import { getPromptById } from '@/services/prompt.service'
+import { getReviewHistory } from '@/services/review.service'
+import { ReviewActions } from '@/components/review/review-actions'
+import { ReviewHistory } from '@/components/review/review-history'
+import { PromptPreview } from '@/components/prompts/prompt-preview'
+import { CodeBlock } from '@/components/shared/code-block'
+import { StatusBadge } from '@/components/shared/status-badge'
+import { PROMPT_TYPE_LABELS } from '@/lib/constants'
 
 interface ReviewDetailPageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string }>
 }
 
-export default async function ReviewDetailPage({
-  params,
-}: ReviewDetailPageProps) {
-  const { id } = await params;
+export default async function ReviewDetailPage({ params }: ReviewDetailPageProps) {
+  const { id } = await params
 
-  let prompt;
+  let prompt
   try {
-    prompt = await getPromptById(id);
+    prompt = await getPromptById(id)
   } catch {
-    notFound();
+    notFound()
   }
 
-  const reviewHistory = await getReviewHistory(id);
+  const reviewHistory = await getReviewHistory(id)
 
   return (
     <div className="max-w-4xl">
@@ -40,9 +38,7 @@ export default async function ReviewDetailPage({
       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-8">
         <span>Type: {PROMPT_TYPE_LABELS[prompt.type] ?? prompt.type}</span>
         <span>Category: {prompt.category.name}</span>
-        {prompt.tags.length > 0 && (
-          <span>Tags: {prompt.tags.map((t) => t.name).join(", ")}</span>
-        )}
+        {prompt.tags.length > 0 && <span>Tags: {prompt.tags.map((t) => t.name).join(', ')}</span>}
         <span>Views: {prompt.viewCount}</span>
         <span>Unlocks: {prompt.unlockCount}</span>
       </div>
@@ -81,5 +77,5 @@ export default async function ReviewDetailPage({
         )}
       </section>
     </div>
-  );
+  )
 }

@@ -1,26 +1,24 @@
-import Link from "next/link";
-import { listRuns } from "@/services/agent.service";
-import { StatusBadge } from "@/components/shared/status-badge";
-import { Pagination } from "@/components/shared/pagination";
+import Link from 'next/link'
+import { listRuns } from '@/services/agent.service'
+import { StatusBadge } from '@/components/shared/status-badge'
+import { Pagination } from '@/components/shared/pagination'
 
 export default async function AgentRunsPage({
   searchParams,
 }: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
-  const params = await searchParams;
-  const page = Number(params.page) || 1;
+  const params = await searchParams
+  const page = Number(params.page) || 1
 
-  const result = await listRuns(page);
+  const result = await listRuns(page)
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Agent Runs</h1>
 
       {result.data.length === 0 ? (
-        <p className="text-muted-foreground text-center py-12">
-          No agent runs found.
-        </p>
+        <p className="text-muted-foreground text-center py-12">No agent runs found.</p>
       ) : (
         <>
           <div className="overflow-x-auto rounded-lg border border-border">
@@ -41,9 +39,7 @@ export default async function AgentRunsPage({
                     <td className="px-4 py-3">
                       <StatusBadge status={run.status} />
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      {run.draftCount}
-                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">{run.draftCount}</td>
                     <td className="px-4 py-3 text-muted-foreground">
                       {new Date(run.createdAt).toLocaleString()}
                     </td>
@@ -62,13 +58,10 @@ export default async function AgentRunsPage({
           </div>
 
           <div className="mt-6">
-            <Pagination
-              page={result.page}
-              totalPages={result.totalPages}
-            />
+            <Pagination page={result.page} totalPages={result.totalPages} />
           </div>
         </>
       )}
     </div>
-  );
+  )
 }

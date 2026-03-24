@@ -18,10 +18,7 @@ export function RecentActivity({ entries }: RecentActivityProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Link
-          href="/admin/audit"
-          className="text-sm text-primary hover:underline"
-        >
+        <Link href="/admin/audit" className="text-sm text-primary hover:underline">
           View all
         </Link>
       </div>

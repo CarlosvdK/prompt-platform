@@ -28,10 +28,7 @@ function cleanupExpiredSessions() {
   }
 }
 
-export async function initiateUnlock(
-  promptId: string,
-  userId?: string,
-): Promise<UnlockSession> {
+export async function initiateUnlock(promptId: string, userId?: string): Promise<UnlockSession> {
   // Validate prompt exists and is published
   const prompt = await db.prompt.findUnique({
     where: { id: promptId },

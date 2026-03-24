@@ -38,11 +38,7 @@ export function Navbar({ user }: NavbarProps) {
         <div className="hidden items-center gap-4 md:flex">
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search prompts..."
-              className="w-64 pl-8"
-            />
+            <Input type="search" placeholder="Search prompts..." className="w-64 pl-8" />
           </div>
           {user ? (
             <Avatar className="h-8 w-8">
@@ -86,10 +82,7 @@ export function Navbar({ user }: NavbarProps) {
                   {user ? (
                     <div className="flex items-center gap-2">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage
-                          src={user.image ?? undefined}
-                          alt={user.name ?? ''}
-                        />
+                        <AvatarImage src={user.image ?? undefined} alt={user.name ?? ''} />
                         <AvatarFallback>
                           {user.name
                             ?.split(' ')

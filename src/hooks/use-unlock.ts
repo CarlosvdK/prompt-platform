@@ -3,13 +3,7 @@
 import { useState, useCallback } from 'react'
 import type { UnlockSession } from '@/types/api'
 
-type UnlockState =
-  | 'idle'
-  | 'initiating'
-  | 'ad_playing'
-  | 'verifying'
-  | 'unlocked'
-  | 'error'
+type UnlockState = 'idle' | 'initiating' | 'ad_playing' | 'verifying' | 'unlocked' | 'error'
 
 export function useUnlock() {
   const [state, setState] = useState<UnlockState>('idle')
@@ -42,32 +36,29 @@ export function useUnlock() {
     }
   }, [])
 
-  const completeAd = useCallback(
-    async (sessionId: string) => {
-      try {
-        setState('verifying')
+  const completeAd = useCallback(async (sessionId: string) => {
+    try {
+      setState('verifying')
 
-        const res = await fetch('/api/unlock/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId }),
-        })
+      const res = await fetch('/api/unlock/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId }),
+      })
 
-        if (!res.ok) {
-          const data = await res.json()
-          throw new Error(data.error ?? 'Failed to verify unlock')
-        }
-
+      if (!res.ok) {
         const data = await res.json()
-        setContent(data.data.content)
-        setState('unlocked')
-      } catch (err) {
-        setState('error')
-        setError(err instanceof Error ? err.message : 'Failed to verify unlock')
+        throw new Error(data.error ?? 'Failed to verify unlock')
       }
-    },
-    []
-  )
+
+      const data = await res.json()
+      setContent(data.data.content)
+      setState('unlocked')
+    } catch (err) {
+      setState('error')
+      setError(err instanceof Error ? err.message : 'Failed to verify unlock')
+    }
+  }, [])
 
   return {
     state,

@@ -21,9 +21,7 @@ export function PromptContent({ content }: PromptContentProps) {
       </div>
       <div className="overflow-hidden rounded-lg border bg-zinc-950 dark:bg-zinc-900">
         <pre className="overflow-x-auto p-4">
-          <code className="whitespace-pre-wrap font-mono text-sm text-zinc-100">
-            {content}
-          </code>
+          <code className="whitespace-pre-wrap font-mono text-sm text-zinc-100">{content}</code>
         </pre>
       </div>
     </div>

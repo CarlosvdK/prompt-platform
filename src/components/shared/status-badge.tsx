@@ -8,8 +8,7 @@ const statusConfig: Record<string, { label: string; className: string }> = {
   },
   PENDING_REVIEW: {
     label: 'Pending Review',
-    className:
-      'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+    className: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
   },
   APPROVED: {
     label: 'Approved',
@@ -21,13 +20,11 @@ const statusConfig: Record<string, { label: string; className: string }> = {
   },
   NEEDS_CHANGES: {
     label: 'Needs Changes',
-    className:
-      'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
+    className: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
   },
   PUBLISHED: {
     label: 'Published',
-    className:
-      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+    className: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
   },
   ARCHIVED: {
     label: 'Archived',
@@ -36,8 +33,7 @@ const statusConfig: Record<string, { label: string; className: string }> = {
   // Review actions
   ESCALATED: {
     label: 'Escalated',
-    className:
-      'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+    className: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
   },
 }
 
@@ -53,10 +49,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   }
 
   return (
-    <Badge
-      variant="secondary"
-      className={cn(config.className, className)}
-    >
+    <Badge variant="secondary" className={cn(config.className, className)}>
       {config.label}
     </Badge>
   )

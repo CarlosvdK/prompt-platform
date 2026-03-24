@@ -8,9 +8,7 @@ interface ReviewHistoryProps {
 
 export function ReviewHistory({ history }: ReviewHistoryProps) {
   if (history.length === 0) {
-    return (
-      <p className="text-sm text-muted-foreground">No review history yet.</p>
-    )
+    return <p className="text-sm text-muted-foreground">No review history yet.</p>
   }
 
   return (
@@ -28,12 +26,8 @@ export function ReviewHistory({ history }: ReviewHistoryProps) {
               </span>
               <StatusBadge status={entry.action} />
             </div>
-            {entry.notes && (
-              <p className="text-sm text-muted-foreground">{entry.notes}</p>
-            )}
-            <p className="text-xs text-muted-foreground">
-              {formatDate(new Date(entry.createdAt))}
-            </p>
+            {entry.notes && <p className="text-sm text-muted-foreground">{entry.notes}</p>}
+            <p className="text-xs text-muted-foreground">{formatDate(new Date(entry.createdAt))}</p>
           </div>
         </div>
       ))}

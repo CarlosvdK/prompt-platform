@@ -1,36 +1,36 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import Link from "next/link";
+import { useState } from 'react'
+import { signIn } from 'next-auth/react'
+import Link from 'next/link'
 
 export default function SignInPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+    e.preventDefault()
+    setError('')
+    setLoading(true)
 
     try {
-      const result = await signIn("credentials", {
+      const result = await signIn('credentials', {
         email,
         password,
         redirect: false,
-      });
+      })
 
       if (result?.error) {
-        setError("Invalid email or password.");
+        setError('Invalid email or password.')
       } else {
-        window.location.href = "/";
+        window.location.href = '/'
       }
     } catch {
-      setError("An unexpected error occurred.");
+      setError('An unexpected error occurred.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -47,10 +47,7 @@ export default function SignInPage() {
           )}
 
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium mb-1.5"
-            >
+            <label htmlFor="email" className="block text-sm font-medium mb-1.5">
               Email
             </label>
             <input
@@ -65,10 +62,7 @@ export default function SignInPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium mb-1.5"
-            >
+            <label htmlFor="password" className="block text-sm font-medium mb-1.5">
               Password
             </label>
             <input
@@ -87,7 +81,7 @@ export default function SignInPage() {
             disabled={loading}
             className="w-full h-10 rounded-lg bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
@@ -97,15 +91,13 @@ export default function SignInPage() {
               <div className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
-              </span>
+              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
 
           <button
             type="button"
-            onClick={() => signIn("google", { callbackUrl: "/" })}
+            onClick={() => signIn('google', { callbackUrl: '/' })}
             className="w-full h-10 rounded-lg border border-border text-sm font-medium transition-colors hover:bg-accent"
           >
             Sign in with Google
@@ -113,7 +105,7 @@ export default function SignInPage() {
 
           <button
             type="button"
-            onClick={() => signIn("github", { callbackUrl: "/" })}
+            onClick={() => signIn('github', { callbackUrl: '/' })}
             className="w-full h-10 rounded-lg border border-border text-sm font-medium transition-colors hover:bg-accent"
           >
             Sign in with GitHub
@@ -121,15 +113,12 @@ export default function SignInPage() {
         </div>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Don&apos;t have an account?{" "}
-          <Link
-            href="/auth/signup"
-            className="font-medium text-foreground hover:underline"
-          >
+          Don&apos;t have an account?{' '}
+          <Link href="/auth/signup" className="font-medium text-foreground hover:underline">
             Sign up
           </Link>
         </p>
       </div>
     </div>
-  );
+  )
 }

@@ -7,11 +7,7 @@ interface LoadingStateProps {
   className?: string
 }
 
-export function LoadingState({
-  variant = 'cards',
-  count = 6,
-  className,
-}: LoadingStateProps) {
+export function LoadingState({ variant = 'cards', count = 6, className }: LoadingStateProps) {
   if (variant === 'table') {
     return (
       <div className={cn('space-y-3', className)}>
@@ -39,12 +35,7 @@ export function LoadingState({
   }
 
   return (
-    <div
-      className={cn(
-        'grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3',
-        className
-      )}
-    >
+    <div className={cn('grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3', className)}>
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="space-y-3 rounded-lg border p-6">
           <Skeleton className="h-5 w-3/4" />

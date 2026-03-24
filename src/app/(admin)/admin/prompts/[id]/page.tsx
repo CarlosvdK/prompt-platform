@@ -1,32 +1,30 @@
-import { notFound } from "next/navigation";
-import { db } from "@/lib/db";
-import { getPromptById } from "@/services/prompt.service";
-import { getReviewHistory } from "@/services/review.service";
-import { StatusBadge } from "@/components/shared/status-badge";
-import { ReviewHistory } from "@/components/review/review-history";
-import { PROMPT_TYPE_LABELS } from "@/lib/constants";
+import { notFound } from 'next/navigation'
+import { db } from '@/lib/db'
+import { getPromptById } from '@/services/prompt.service'
+import { getReviewHistory } from '@/services/review.service'
+import { StatusBadge } from '@/components/shared/status-badge'
+import { ReviewHistory } from '@/components/review/review-history'
+import { PROMPT_TYPE_LABELS } from '@/lib/constants'
 
 interface AdminPromptDetailProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string }>
 }
 
-export default async function AdminPromptDetailPage({
-  params,
-}: AdminPromptDetailProps) {
-  const { id } = await params;
+export default async function AdminPromptDetailPage({ params }: AdminPromptDetailProps) {
+  const { id } = await params
 
-  let prompt;
+  let prompt
   try {
-    prompt = await getPromptById(id);
+    prompt = await getPromptById(id)
   } catch {
-    notFound();
+    notFound()
   }
 
   const [reviewHistory, versions, auditEntries] = await Promise.all([
     getReviewHistory(id),
     db.promptVersion.findMany({
       where: { promptId: id },
-      orderBy: { version: "desc" },
+      orderBy: { version: 'desc' },
       select: {
         id: true,
         version: true,
@@ -36,13 +34,13 @@ export default async function AdminPromptDetailPage({
     }),
     db.auditLog.findMany({
       where: { promptId: id },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       take: 20,
       include: {
         user: { select: { id: true, name: true, email: true } },
       },
     }),
-  ]);
+  ])
 
   return (
     <div className="max-w-4xl">
@@ -57,39 +55,32 @@ export default async function AdminPromptDetailPage({
       {/* Metadata */}
       <div className="grid grid-cols-2 gap-4 rounded-lg border border-border p-4 mb-8 text-sm">
         <div>
-          <span className="text-muted-foreground">Type:</span>{" "}
+          <span className="text-muted-foreground">Type:</span>{' '}
           {PROMPT_TYPE_LABELS[prompt.type] ?? prompt.type}
         </div>
         <div>
-          <span className="text-muted-foreground">Category:</span>{" "}
-          {prompt.category.name}
+          <span className="text-muted-foreground">Category:</span> {prompt.category.name}
         </div>
         <div>
-          <span className="text-muted-foreground">Tags:</span>{" "}
-          {prompt.tags.length > 0
-            ? prompt.tags.map((t) => t.name).join(", ")
-            : "None"}
+          <span className="text-muted-foreground">Tags:</span>{' '}
+          {prompt.tags.length > 0 ? prompt.tags.map((t) => t.name).join(', ') : 'None'}
         </div>
         <div>
           <span className="text-muted-foreground">Slug:</span> {prompt.slug}
         </div>
         <div>
-          <span className="text-muted-foreground">Views:</span>{" "}
-          {prompt.viewCount}
+          <span className="text-muted-foreground">Views:</span> {prompt.viewCount}
         </div>
         <div>
-          <span className="text-muted-foreground">Unlocks:</span>{" "}
-          {prompt.unlockCount}
+          <span className="text-muted-foreground">Unlocks:</span> {prompt.unlockCount}
         </div>
         <div>
-          <span className="text-muted-foreground">Created:</span>{" "}
+          <span className="text-muted-foreground">Created:</span>{' '}
           {new Date(prompt.createdAt).toLocaleString()}
         </div>
         <div>
-          <span className="text-muted-foreground">Published:</span>{" "}
-          {prompt.publishedAt
-            ? new Date(prompt.publishedAt).toLocaleString()
-            : "Not published"}
+          <span className="text-muted-foreground">Published:</span>{' '}
+          {prompt.publishedAt ? new Date(prompt.publishedAt).toLocaleString() : 'Not published'}
         </div>
       </div>
 
@@ -148,7 +139,7 @@ export default async function AdminPromptDetailPage({
               >
                 <span className="font-medium">{entry.action}</span>
                 <span className="text-muted-foreground">
-                  {entry.user?.name ?? entry.user?.email ?? "System"}
+                  {entry.user?.name ?? entry.user?.email ?? 'System'}
                 </span>
                 <span className="text-muted-foreground">
                   {new Date(entry.createdAt).toLocaleString()}
@@ -159,5 +150,5 @@ export default async function AdminPromptDetailPage({
         )}
       </section>
     </div>
-  );
+  )
 }

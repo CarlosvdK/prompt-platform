@@ -1,89 +1,85 @@
-import Link from 'next/link'
-import { Eye, Unlock } from 'lucide-react'
+'use client'
+
+import { useRef, useState } from 'react'
+import { usePromptModal } from '@/hooks/use-prompt-modal'
 import type { PromptSummary } from '@/types/prompt'
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { truncate } from '@/lib/utils'
 
 interface PromptCardProps {
   prompt: PromptSummary
 }
 
-const categoryColors: Record<string, string> = {
-  coding: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-  writing: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-  marketing: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  business: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
-  education: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200',
-}
-
 export function PromptCard({ prompt }: PromptCardProps) {
-  const categoryColor =
-    categoryColors[prompt.category.slug] ??
-    'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+  const { openPrompt } = usePromptModal()
+  const [isHovered, setIsHovered] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  // Find video/animation preview for hover playback
+  const videoPreview = null // We'll use thumbnailUrl for now
+
+  const handleMouseEnter = () => {
+    setIsHovered(true)
+    videoRef.current?.play()
+  }
+
+  const handleMouseLeave = () => {
+    setIsHovered(false)
+    videoRef.current?.pause()
+    if (videoRef.current) videoRef.current.currentTime = 0
+  }
+
+  const handleClick = () => {
+    openPrompt(prompt.slug)
+  }
+
+  // Category color map for gradient fallbacks
+  const categoryColors: Record<string, string> = {
+    coding: 'from-blue-950 to-blue-900',
+    writing: 'from-purple-950 to-purple-900',
+    marketing: 'from-green-950 to-green-900',
+    design: 'from-pink-950 to-pink-900',
+    business: 'from-amber-950 to-amber-900',
+    education: 'from-cyan-950 to-cyan-900',
+    data: 'from-indigo-950 to-indigo-900',
+    creative: 'from-rose-950 to-rose-900',
+  }
+
+  const gradientClass = categoryColors[prompt.category.slug] ?? 'from-zinc-900 to-zinc-800'
 
   return (
-    <Link href={`/prompt/${prompt.slug}`}>
-      <Card className="group h-full transition-shadow hover:shadow-md">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between gap-2">
-            <CardTitle className="line-clamp-1 text-base">
-              {prompt.title}
-            </CardTitle>
-          </div>
-          <p className="line-clamp-2 text-sm text-muted-foreground">
-            {truncate(prompt.description, 120)}
-          </p>
-        </CardHeader>
-        <CardContent className="pb-3">
-          <div className="flex flex-wrap gap-1.5">
-            <Badge
-              variant="secondary"
-              className={categoryColor}
-            >
-              {prompt.category.name}
-            </Badge>
-            <Badge variant="outline" className="text-xs">
-              {prompt.type}
-            </Badge>
-          </div>
-          {prompt.tags.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1">
-              {prompt.tags.slice(0, 3).map((tag) => (
-                <span
-                  key={tag.id}
-                  className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
-                >
-                  {tag.name}
-                </span>
-              ))}
-              {prompt.tags.length > 3 && (
-                <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-                  +{prompt.tags.length - 3}
-                </span>
-              )}
+    <div
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="group relative cursor-pointer overflow-hidden rounded-lg aspect-[4/3] bg-card border border-border transition-all duration-300 ease-out hover:scale-[1.03] hover:shadow-lg hover:shadow-white/5 hover:border-white/20"
+    >
+      {prompt.thumbnailUrl ? (
+        <img
+          src={prompt.thumbnailUrl}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
+        />
+      ) : (
+        /* Gradient fallback with category initial and prompt title hint */
+        <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass} flex items-center justify-center`}>
+          <div className="text-center px-4">
+            <div className="text-3xl font-bold text-white/20 mb-2">
+              {prompt.category.name.charAt(0)}
             </div>
-          )}
-        </CardContent>
-        <CardFooter className="text-xs text-muted-foreground">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1">
-              <Eye className="h-3.5 w-3.5" />
-              {prompt.viewCount}
-            </span>
-            <span className="flex items-center gap-1">
-              <Unlock className="h-3.5 w-3.5" />
-              {prompt.unlockCount}
-            </span>
+            <div className="text-xs text-white/30 line-clamp-2">
+              {prompt.title}
+            </div>
           </div>
-        </CardFooter>
-      </Card>
-    </Link>
+        </div>
+      )}
+
+      {/* Bottom gradient overlay - shows category on hover */}
+      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
+          <span className="text-xs text-white/80 font-medium truncate">{prompt.category.name}</span>
+          <span className="text-xs text-white/50">{prompt.title}</span>
+        </div>
+      </div>
+    </div>
   )
 }

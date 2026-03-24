@@ -30,12 +30,7 @@ export function AdminSidebar({ className }: { className?: string }) {
   const pathname = usePathname()
 
   return (
-    <aside
-      className={cn(
-        'flex h-full w-64 flex-col border-r bg-background',
-        className
-      )}
-    >
+    <aside className={cn('flex h-full w-64 flex-col border-r bg-background', className)}>
       <div className="flex h-16 items-center border-b px-6">
         <Link href="/admin" className="text-lg font-bold">
           {siteConfig.name}
@@ -45,9 +40,7 @@ export function AdminSidebar({ className }: { className?: string }) {
         {adminNavItems.map((item) => {
           const Icon = iconMap[item.icon]
           const isActive =
-            item.href === '/admin'
-              ? pathname === '/admin'
-              : pathname.startsWith(item.href)
+            item.href === '/admin' ? pathname === '/admin' : pathname.startsWith(item.href)
 
           return (
             <Link
@@ -57,7 +50,7 @@ export function AdminSidebar({ className }: { className?: string }) {
                 'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
                 isActive
                   ? 'bg-accent text-accent-foreground'
-                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+                  : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground',
               )}
             >
               {Icon && <Icon className="h-4 w-4" />}

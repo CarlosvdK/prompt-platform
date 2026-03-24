@@ -59,9 +59,7 @@ export async function submitForReview(promptId: string, userId?: string) {
   if (!prompt) throw new NotFoundError('Prompt')
 
   if (!canTransition(prompt.status, 'PENDING_REVIEW')) {
-    throw new WorkflowError(
-      `Cannot submit for review from status ${prompt.status}`,
-    )
+    throw new WorkflowError(`Cannot submit for review from status ${prompt.status}`)
   }
 
   const updated = await db.prompt.update({

@@ -18,17 +18,9 @@ export function useReviewActions() {
   const { toast } = useToast()
 
   const performAction = useCallback(
-    async (
-      promptId: string,
-      action: 'APPROVED' | 'REJECTED' | 'NEEDS_CHANGES',
-      notes?: string
-    ) => {
+    async (promptId: string, action: 'APPROVED' | 'REJECTED' | 'NEEDS_CHANGES', notes?: string) => {
       const loadingKey =
-        action === 'APPROVED'
-          ? 'approve'
-          : action === 'REJECTED'
-            ? 'reject'
-            : 'requestChanges'
+        action === 'APPROVED' ? 'approve' : action === 'REJECTED' ? 'reject' : 'requestChanges'
 
       try {
         setLoading((prev) => ({ ...prev, [loadingKey]: true }))
@@ -52,8 +44,7 @@ export function useReviewActions() {
       } catch (err) {
         toast({
           title: 'Error',
-          description:
-            err instanceof Error ? err.message : 'Review action failed',
+          description: err instanceof Error ? err.message : 'Review action failed',
           variant: 'destructive',
         })
         throw err
@@ -61,25 +52,22 @@ export function useReviewActions() {
         setLoading((prev) => ({ ...prev, [loadingKey]: false }))
       }
     },
-    [toast]
+    [toast],
   )
 
   const approve = useCallback(
-    (promptId: string, notes?: string) =>
-      performAction(promptId, 'APPROVED', notes),
-    [performAction]
+    (promptId: string, notes?: string) => performAction(promptId, 'APPROVED', notes),
+    [performAction],
   )
 
   const reject = useCallback(
-    (promptId: string, notes: string) =>
-      performAction(promptId, 'REJECTED', notes),
-    [performAction]
+    (promptId: string, notes: string) => performAction(promptId, 'REJECTED', notes),
+    [performAction],
   )
 
   const requestChanges = useCallback(
-    (promptId: string, notes: string) =>
-      performAction(promptId, 'NEEDS_CHANGES', notes),
-    [performAction]
+    (promptId: string, notes: string) => performAction(promptId, 'NEEDS_CHANGES', notes),
+    [performAction],
   )
 
   return { approve, reject, requestChanges, loading }

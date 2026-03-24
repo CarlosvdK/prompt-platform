@@ -102,11 +102,7 @@ export function ReviewActions({ promptId, onComplete }: ReviewActionsProps) {
             </DialogDescription>
           </DialogHeader>
 
-          <ReviewNotes
-            value={notes}
-            onChange={setNotes}
-            required
-          />
+          <ReviewNotes value={notes} onChange={setNotes} required />
 
           <DialogFooter>
             <Button
@@ -122,9 +118,7 @@ export function ReviewActions({ promptId, onComplete }: ReviewActionsProps) {
               onClick={handleSubmitWithNotes}
               disabled={
                 !notes.trim() ||
-                (dialogAction === 'reject'
-                  ? loading.reject
-                  : loading.requestChanges)
+                (dialogAction === 'reject' ? loading.reject : loading.requestChanges)
               }
               className={
                 dialogAction === 'reject'

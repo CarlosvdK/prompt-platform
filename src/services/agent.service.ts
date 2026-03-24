@@ -7,11 +7,29 @@ import { getAIProvider } from '@/adapters/ai'
 import { logAction } from './audit.service'
 import { submitForReview } from './review.service'
 import { GenerationRequest, AgentRunDetail, AgentRunSummary, PaginatedResult } from '@/types'
+import { logger } from '@/lib/logger'
 
-export async function requestGeneration(
-  params: GenerationRequest,
-  userId?: string,
-) {
+const UI_GENERATION_SYSTEM_PROMPT = `You are a UI component prompt engineer for Softset. Your job is to create prompts that, when given to ANY large language model (GPT-4, Claude, Gemini, Llama), produce identical React + Tailwind CSS components.
+
+Rules for the prompts you create:
+1. Each prompt must produce a single-file React component
+2. Must use Tailwind CSS utility classes for ALL styling — no custom CSS
+3. Must specify EXACT colors using Tailwind classes (e.g., bg-zinc-900, text-blue-400)
+4. Must specify EXACT spacing, dimensions, and typography
+5. Must include all required imports (React, icons from lucide-react if needed)
+6. Must be a default export function component
+7. The component must be self-contained — no external dependencies beyond React and Tailwind
+8. Include the complete expected output code as a reference example within the prompt
+
+You MUST respond with valid JSON in this exact format:
+{
+  "title": "Component Name (e.g., Glassmorphism Login Card)",
+  "description": "One sentence describing what this component is",
+  "content": "The full prompt text that a user would paste into any LLM to get this component. This should be 300-600 words with exact specifications.",
+  "previewCode": "The complete React+Tailwind component code that the prompt should produce. This is the expected output."
+}`
+
+export async function requestGeneration(params: GenerationRequest, userId?: string) {
   const run = await db.agentRun.create({
     data: {
       skill: params.skill,
@@ -54,34 +72,53 @@ export async function executeGeneration(runId: string) {
     const input = run.input as Record<string, unknown>
     const aiProvider = getAIProvider()
 
+    const isUIGeneration = run.skill === 'ui-component-generation'
+
     // Build prompt from input parameters
-    const parts: string[] = [
-      `Generate a high-quality prompt for the following:`,
-      `Skill: ${run.skill}`,
-    ]
-    if (input.topic) parts.push(`Topic: ${input.topic}`)
-    if (input.category) parts.push(`Category: ${input.category}`)
-    if (input.type) parts.push(`Type: ${input.type}`)
-    if (input.instructions) parts.push(`Instructions: ${input.instructions}`)
+    const parts: string[] = []
+    if (isUIGeneration) {
+      parts.push(`Create a UI component prompt for: "${input.topic ?? input.variation ?? 'a modern component'}"`)
+      if (input.category) parts.push(`Category: ${input.category}`)
+      parts.push(
+        'The component should use React and Tailwind CSS. Make it visually impressive and production-ready.',
+      )
+    } else {
+      parts.push(`Generate a high-quality prompt for the following:`)
+      parts.push(`Skill: ${run.skill}`)
+      if (input.topic) parts.push(`Topic: ${input.topic}`)
+      if (input.category) parts.push(`Category: ${input.category}`)
+      if (input.type) parts.push(`Type: ${input.type}`)
+      if (input.instructions) parts.push(`Instructions: ${input.instructions}`)
+    }
+
+    const systemPrompt = isUIGeneration
+      ? UI_GENERATION_SYSTEM_PROMPT
+      : 'You are a prompt engineering expert. Generate a well-structured prompt based on the given parameters. Return a JSON object with title, description, and content fields.'
 
     const result = await aiProvider.generateCompletion({
       prompt: parts.join('\n'),
-      systemPrompt:
-        'You are a prompt engineering expert. Generate a well-structured prompt based on the given parameters. Return a JSON object with title, description, and content fields.',
-      maxTokens: 2000,
+      systemPrompt,
+      maxTokens: isUIGeneration ? 4096 : 2000,
       temperature: 0.7,
     })
 
     // Parse generated content
-    let parsed: { title: string; description: string; content: string }
+    let parsed: { title: string; description: string; content: string; previewCode?: string }
     try {
-      parsed = JSON.parse(result.content)
+      const jsonStr = result.content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+      parsed = JSON.parse(jsonStr)
     } catch {
       parsed = {
         title: `Generated prompt for ${input.topic ?? run.skill}`,
         description: `AI-generated prompt about ${input.topic ?? run.skill}`,
         content: result.content,
       }
+    }
+
+    // Build metadata with previewCode if available
+    const metadata: Record<string, unknown> = {}
+    if (parsed.previewCode) {
+      metadata.previewCode = parsed.previewCode
     }
 
     // Create the draft
@@ -91,9 +128,18 @@ export async function executeGeneration(runId: string) {
         title: parsed.title,
         description: parsed.description,
         content: parsed.content,
-        type: (input.type as 'TEXT' | 'CODE' | 'SYSTEM_PROMPT' | 'CHAIN' | 'IMAGE') ?? 'TEXT',
+        type: isUIGeneration
+          ? 'CODE'
+          : ((input.type as 'TEXT' | 'CODE' | 'SYSTEM_PROMPT' | 'CHAIN' | 'IMAGE') ?? 'TEXT'),
+        metadata: Object.keys(metadata).length > 0 ? (metadata as Prisma.InputJsonValue) : undefined,
       },
     })
+
+    // previewCode is stored in draft.metadata for now
+    // It gets created as a PromptPreview when the draft is accepted via acceptDraft()
+    if (parsed.previewCode) {
+      logger.info('Preview code stored in draft metadata', { draftId: draft.id })
+    }
 
     // Update run to completed
     await db.agentRun.update({

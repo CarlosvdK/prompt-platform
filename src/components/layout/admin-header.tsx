@@ -20,28 +20,18 @@ export function AdminHeader({ title, user, onMenuToggle }: AdminHeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background px-4 sm:px-6">
       <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="lg:hidden"
-          onClick={onMenuToggle}
-        >
+        <Button variant="ghost" size="icon" className="lg:hidden" onClick={onMenuToggle}>
           <Menu className="h-5 w-5" />
           <span className="sr-only">Toggle menu</span>
         </Button>
-        {title && (
-          <h1 className="text-lg font-semibold">{title}</h1>
-        )}
+        {title && <h1 className="text-lg font-semibold">{title}</h1>}
       </div>
 
       <div className="flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage
-                src={user?.image ?? undefined}
-                alt={user?.name ?? ''}
-              />
+              <AvatarImage src={user?.image ?? undefined} alt={user?.name ?? ''} />
               <AvatarFallback>
                 {user?.name
                   ?.split(' ')

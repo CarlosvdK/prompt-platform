@@ -54,7 +54,7 @@ export class MockAIAdapter implements AIProvider {
           '## Constraints',
           '- Keep responses concise but comprehensive',
           '- Use simple language unless technical terminology is necessary',
-          '- Always consider the user\'s skill level and adjust accordingly',
+          "- Always consider the user's skill level and adjust accordingly",
         ].join('\n'),
       },
       null,
