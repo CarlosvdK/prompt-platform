@@ -79,7 +79,11 @@ async function main() {
           description: parsed.description,
           content: parsed.content,
           type: 'CODE',
-          metadata: parsed.previewCode ? { previewCode: parsed.previewCode } : undefined,
+          metadata: {
+            ...(parsed.previewCode ? { previewCode: parsed.previewCode } : {}),
+            ...(parsed.tags ? { tags: parsed.tags } : {}),
+            categorySlug: categorySlug,
+          } as any,
         },
       })
 

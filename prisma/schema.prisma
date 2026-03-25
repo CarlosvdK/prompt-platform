@@ -245,6 +245,10 @@ model ReviewDecision {
   reviewerId String
   action     ReviewAction
   notes      String?      @db.Text
+  scoreVisual        Int?    // 1-5 visual fidelity
+  scoreAlignment     Int?    // 1-5 code-prompt alignment
+  scoreTechnical     Int?    // 1-5 technical correctness
+  scoreAccessibility Int?    // 1-5 accessibility
   createdAt  DateTime     @default(now())
 
   prompt   Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)

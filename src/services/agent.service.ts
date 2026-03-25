@@ -9,24 +9,37 @@ import { submitForReview } from './review.service'
 import { GenerationRequest, AgentRunDetail, AgentRunSummary, PaginatedResult } from '@/types'
 import { logger } from '@/lib/logger'
 
-const UI_GENERATION_SYSTEM_PROMPT = `You are a UI component prompt engineer for Softset. Your job is to create prompts that, when given to ANY large language model (GPT-4, Claude, Gemini, Llama), produce identical React + Tailwind CSS components.
+const UI_GENERATION_SYSTEM_PROMPT = `You are a senior UI component prompt engineer for Softset. You create structured prompts that produce identical React + Tailwind CSS components when given to ANY large language model.
 
-Rules for the prompts you create:
-1. Each prompt must produce a single-file React component
-2. Must use Tailwind CSS utility classes for ALL styling — no custom CSS
-3. Must specify EXACT colors using Tailwind classes (e.g., bg-zinc-900, text-blue-400)
-4. Must specify EXACT spacing, dimensions, and typography
-5. Must include all required imports (React, icons from lucide-react if needed)
-6. Must be a default export function component
-7. The component must be self-contained — no external dependencies beyond React and Tailwind
-8. Include the complete expected output code as a reference example within the prompt
+PROMPT STRUCTURE REQUIREMENTS:
+Every prompt you create MUST have these sections:
+1. **Overview** — What the component is, its purpose, and visual style
+2. **Requirements** — Exact list of elements, interactions, and states
+3. **Styling Specification** — Exact Tailwind classes for every element:
+   - Colors: use specific Tailwind classes (bg-zinc-900, text-blue-400, NOT "dark background")
+   - Spacing: exact padding/margin values (p-6, gap-4, NOT "some spacing")
+   - Typography: font sizes, weights, line heights (text-lg font-semibold)
+   - Borders: exact border classes (border border-white/10 rounded-xl)
+   - Responsive: include sm:, md:, lg: breakpoints
+   - Dark mode: component must look great on dark backgrounds (#09090b)
+4. **Expected Output** — The COMPLETE React component code that this prompt should produce. This is the reference implementation.
 
-You MUST respond with valid JSON in this exact format:
+COMPONENT RULES:
+- Single-file React functional component with default export
+- Tailwind CSS utility classes ONLY — no custom CSS, no CSS modules
+- Import only from: react, lucide-react (for icons)
+- Self-contained — no props required, no external state
+- Must render correctly at 1920x1080 on a dark background
+- Must be responsive (mobile-first with breakpoints)
+
+OUTPUT FORMAT — respond with valid JSON only:
 {
   "title": "Component Name (e.g., Glassmorphism Login Card)",
-  "description": "One sentence describing what this component is",
-  "content": "The full prompt text that a user would paste into any LLM to get this component. This should be 300-600 words with exact specifications.",
-  "previewCode": "The complete React+Tailwind component code that the prompt should produce. This is the expected output."
+  "description": "One concise sentence describing the component",
+  "content": "The full structured prompt text (400-800 words) with all 4 sections",
+  "previewCode": "The complete React+Tailwind component code",
+  "tags": ["tailwind", "react", "dark-mode"],
+  "categorySlug": "authentication"
 }`
 
 export async function requestGeneration(params: GenerationRequest, userId?: string) {
@@ -103,7 +116,7 @@ export async function executeGeneration(runId: string) {
     })
 
     // Parse generated content
-    let parsed: { title: string; description: string; content: string; previewCode?: string }
+    let parsed: { title: string; description: string; content: string; previewCode?: string; tags?: string[]; categorySlug?: string }
     try {
       const jsonStr = result.content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
       parsed = JSON.parse(jsonStr)
@@ -115,10 +128,16 @@ export async function executeGeneration(runId: string) {
       }
     }
 
-    // Build metadata with previewCode if available
+    // Build metadata with previewCode, tags, and categorySlug if available
     const metadata: Record<string, unknown> = {}
     if (parsed.previewCode) {
       metadata.previewCode = parsed.previewCode
+    }
+    if (parsed.tags) {
+      metadata.tags = parsed.tags
+    }
+    if (parsed.categorySlug) {
+      metadata.categorySlug = parsed.categorySlug
     }
 
     // Create the draft
@@ -265,6 +284,16 @@ export async function acceptDraft(draftId: string, userId?: string) {
     slug = `${slug}-${Date.now().toString(36)}`
   }
 
+  const draftMeta = (draft.metadata as Record<string, any>) ?? {}
+  let category = null
+  if (draftMeta.categorySlug) {
+    category = await db.category.findUnique({ where: { slug: draftMeta.categorySlug } })
+  }
+  if (!category) {
+    category = await db.category.findFirst({ orderBy: { sortOrder: 'asc' } })
+  }
+  if (!category) throw new ValidationError('No categories exist')
+
   const [prompt] = await db.$transaction([
     db.prompt.create({
       data: {
@@ -273,7 +302,7 @@ export async function acceptDraft(draftId: string, userId?: string) {
         description: draft.description,
         content: draft.content,
         type: draft.type,
-        categoryId: await getDefaultCategoryId(),
+        categoryId: category.id,
         metadata: draft.metadata ?? undefined,
         versions: {
           create: {
@@ -295,6 +324,19 @@ export async function acceptDraft(draftId: string, userId?: string) {
     where: { id: draftId },
     data: { promptId: prompt.id },
   })
+
+  // Store tags from generation metadata
+  if (Array.isArray(draftMeta.tags) && draftMeta.tags.length > 0) {
+    const existingTags = await db.tag.findMany({
+      where: { slug: { in: draftMeta.tags } },
+    })
+    if (existingTags.length > 0) {
+      await db.promptTag.createMany({
+        data: existingTags.map((tag) => ({ promptId: prompt.id, tagId: tag.id })),
+        skipDuplicates: true,
+      })
+    }
+  }
 
   // Submit for review
   await submitForReview(prompt.id, userId)
@@ -325,13 +367,3 @@ export async function rejectDraft(draftId: string, userId?: string) {
   })
 }
 
-async function getDefaultCategoryId(): Promise<string> {
-  const category = await db.category.findFirst({
-    orderBy: { sortOrder: 'asc' },
-    select: { id: true },
-  })
-  if (!category) {
-    throw new ValidationError('No categories exist. Please create a category first.')
-  }
-  return category.id
-}

@@ -82,6 +82,7 @@ export async function reviewPrompt(
   reviewerId: string,
   action: ReviewAction,
   notes?: string,
+  scores?: { scoreVisual?: number; scoreAlignment?: number; scoreTechnical?: number; scoreAccessibility?: number },
 ) {
   const prompt = await db.prompt.findUnique({
     where: { id: promptId },
@@ -104,6 +105,7 @@ export async function reviewPrompt(
         reviewerId,
         action,
         notes,
+        ...scores,
       },
       include: {
         reviewer: { select: { id: true, name: true, email: true } },

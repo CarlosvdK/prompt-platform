@@ -14,8 +14,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const { id } = await params
     const body = await request.json()
     const { notes } = rejectBodySchema.parse(body)
+    const { scoreVisual, scoreAlignment, scoreTechnical, scoreAccessibility } = body
+    const scores = { scoreVisual, scoreAlignment, scoreTechnical, scoreAccessibility }
 
-    const decision = await reviewPrompt(id, user.id, 'REJECTED', notes)
+    const decision = await reviewPrompt(id, user.id, 'REJECTED', notes, scores)
     return NextResponse.json({ success: true, decision })
   } catch (error) {
     return handleApiError(error)

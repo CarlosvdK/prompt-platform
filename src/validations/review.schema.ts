@@ -16,6 +16,10 @@ export const reviewDecisionSchema = z
   .object({
     action: reviewActionEnum,
     notes: z.string().max(5000).optional(),
+    scoreVisual: z.number().int().min(1).max(5).optional(),
+    scoreAlignment: z.number().int().min(1).max(5).optional(),
+    scoreTechnical: z.number().int().min(1).max(5).optional(),
+    scoreAccessibility: z.number().int().min(1).max(5).optional(),
   })
   .refine(
     (data) => {

@@ -16,7 +16,11 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     if (!isAdmin) {
       // Remove content-level data for non-admins; previews are visible
       const { metadata, ...publicData } = prompt
-      return NextResponse.json(publicData)
+      const metadataObj = metadata as Record<string, any> | null
+      return NextResponse.json({
+        ...publicData,
+        metadata: metadataObj?.previewCode ? { previewCode: true } : null,
+      })
     }
 
     return NextResponse.json(prompt)

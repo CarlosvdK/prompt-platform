@@ -18,7 +18,7 @@ export function useReviewActions() {
   const { toast } = useToast()
 
   const performAction = useCallback(
-    async (promptId: string, action: 'APPROVED' | 'REJECTED' | 'NEEDS_CHANGES', notes?: string) => {
+    async (promptId: string, action: 'APPROVED' | 'REJECTED' | 'NEEDS_CHANGES', notes?: string, scores?: Record<string, number>) => {
       const loadingKey =
         action === 'APPROVED' ? 'approve' : action === 'REJECTED' ? 'reject' : 'requestChanges'
 
@@ -28,7 +28,7 @@ export function useReviewActions() {
         const res = await fetch(`/api/admin/review/${promptId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action, notes }),
+          body: JSON.stringify({ action, notes, ...scores }),
         })
 
         if (!res.ok) {
@@ -56,17 +56,17 @@ export function useReviewActions() {
   )
 
   const approve = useCallback(
-    (promptId: string, notes?: string) => performAction(promptId, 'APPROVED', notes),
+    (promptId: string, notes?: string, scores?: Record<string, number>) => performAction(promptId, 'APPROVED', notes, scores),
     [performAction],
   )
 
   const reject = useCallback(
-    (promptId: string, notes: string) => performAction(promptId, 'REJECTED', notes),
+    (promptId: string, notes: string, scores?: Record<string, number>) => performAction(promptId, 'REJECTED', notes, scores),
     [performAction],
   )
 
   const requestChanges = useCallback(
-    (promptId: string, notes: string) => performAction(promptId, 'NEEDS_CHANGES', notes),
+    (promptId: string, notes: string, scores?: Record<string, number>) => performAction(promptId, 'NEEDS_CHANGES', notes, scores),
     [performAction],
   )
 

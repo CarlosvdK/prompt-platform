@@ -8,15 +8,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const user = await requireRole(['REVIEWER', 'ADMIN'])
     const { id } = await params
 
-    let notes: string | undefined
-    try {
-      const body = await request.json()
-      notes = body.notes
-    } catch {
-      // Body is optional for approvals
-    }
+    const body = await request.json().catch(() => ({}))
+    const { notes, scoreVisual, scoreAlignment, scoreTechnical, scoreAccessibility } = body
+    const scores = { scoreVisual, scoreAlignment, scoreTechnical, scoreAccessibility }
 
-    const decision = await reviewPrompt(id, user.id, 'APPROVED', notes)
+    const decision = await reviewPrompt(id, user.id, 'APPROVED', notes, scores)
     return NextResponse.json({ success: true, decision })
   } catch (error) {
     return handleApiError(error)
