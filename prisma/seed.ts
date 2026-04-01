@@ -314,6 +314,90 @@ Below the cards, add a mt-20 text-center section:
 - Responsive: cards stack on mobile, 3-column grid on md and up.
 - No external dependencies — React and Tailwind only.`
 
+  // ── Extra prompt content strings ─────────────────────────────────────
+
+  const darkSidebarContent = `Create a React component called DarkSidebarNav that renders a collapsible dark sidebar navigation. Use only React and Tailwind CSS. The sidebar should be 240px wide when expanded and 64px when collapsed, with a smooth width transition (transition-all duration-300). The background is bg-slate-900 with a right border border-slate-800.
+
+At the top, show a logo area: when expanded show a gradient text logo "Softset" in font-bold text-lg bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent; when collapsed show only a colored square icon. Next to the logo (expanded only) place a collapse toggle button (ChevronLeft icon) that switches to ChevronRight when collapsed.
+
+Navigation items should be grouped in two sections separated by a thin divider. Section 1 "Main" includes: Dashboard (LayoutDashboard icon), Prompts (FileText), Reviews (ClipboardCheck), Analytics (BarChart2). Section 2 "Settings" includes: Team (Users), Settings (Settings), Help (HelpCircle).
+
+Each nav item: flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer. Default state: text-slate-400 hover:text-white hover:bg-slate-800. Active state: text-white bg-slate-800 with a left border-l-2 border-purple-500. When collapsed, hide the label and show only the icon centered, with a tooltip (title attribute) showing the label. Use React.useState for collapsed state and active item. Export as default.`
+
+  const toastSystemContent = `Create a React component called ToastSystem that demonstrates a notification toast system. Use only React and Tailwind CSS.
+
+The component renders a full-page demo with a dark bg-slate-950 background. In the center, show a card with four trigger buttons: "Success", "Error", "Warning", "Info" — each styled with their respective color (green, red, amber, blue).
+
+Toasts appear in the top-right corner (fixed top-5 right-5 flex flex-col gap-3 z-50). Each toast is 320px wide with rounded-xl bg-slate-800 border border-slate-700 shadow-2xl p-4. Inside: an icon on the left (CheckCircle for success, XCircle for error, AlertTriangle for warning, Info for info), a title in text-sm font-semibold text-white, a subtitle message in text-xs text-slate-400, and an X close button on the right. Each toast type has a colored left border (border-l-4) and matching icon color.
+
+Toasts animate in from the right (translate-x-full to translate-x-0) using a CSS keyframe slide-in. They auto-dismiss after 4 seconds with a shrinking progress bar at the bottom of the toast showing time remaining. Support stacking up to 5 toasts; oldest dismisses first when limit exceeded. Use React.useState for the toast array, each item having id, type, title, message, and createdAt. Export as default.`
+
+  const dataTableContent = `Create a React component called FilterableDataTable that renders a sortable, filterable data table. Use only React and Tailwind CSS.
+
+Generate 20 rows of mock user data inline (no fetch): each row has id, name, email, role (Admin/Editor/Viewer), status (Active/Inactive), and joinDate.
+
+Above the table: a search input on the left (searches name and email, bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-sm text-white placeholder-slate-500) and a role filter dropdown on the right (same styling, options: All Roles, Admin, Editor, Viewer).
+
+The table wrapper uses overflow-x-auto rounded-xl border border-slate-800. The table itself: w-full text-sm. Header row: bg-slate-900 text-slate-400 text-xs uppercase tracking-wider. Each header cell is clickable to sort (show an up/down arrow icon — solid when active, gray outline otherwise). Rows alternate bg-slate-950 / bg-slate-900/50, hover:bg-slate-800/50. Columns: Name+Avatar (generated initials with colored bg), Email, Role (badge), Status (green dot for Active, gray for Inactive), Join Date, Actions (Edit and Delete icon buttons).
+
+Below the table: pagination showing "Showing X-Y of Z results" and Prev/Next buttons. Show 8 rows per page. Use React.useState for search, filter, sort column, sort direction, and current page. All filtering/sorting is done client-side. Export as default.`
+
+  const checkoutFormContent = `Create a React component called MultiStepCheckout that renders a 3-step checkout form. Use only React and Tailwind CSS. Background: bg-slate-950 min-h-screen, centered card max-w-lg mx-auto.
+
+Step indicator at the top: three numbered circles connected by lines. Completed steps show a checkmark with bg-purple-600; current step shows the number with a ring ring-purple-500; future steps are bg-slate-800 text-slate-500.
+
+Step 1 — Shipping: fields for First Name, Last Name (side by side), Email, Address, City, State + ZIP (side by side), Country dropdown. All inputs: bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-sm focus:ring-2 focus:ring-purple-500.
+
+Step 2 — Payment: Card number input with card brand detection (show Visa/MC icon when number starts with 4 or 5), Cardholder Name, Expiry and CVC side by side. Below, a secure payment badge row (lock icon + "256-bit SSL" text in text-xs text-slate-500).
+
+Step 3 — Review: Show a summary of all entered data in read-only rows, plus a mock order total breakdown (Subtotal, Shipping, Tax, Total in bold).
+
+Navigation: "Back" button (ghost style) and "Continue" / "Place Order" (purple gradient) buttons. Use React.useState for current step and form data object. Validate that all fields are non-empty before allowing next step; show inline error messages in text-red-400 text-xs. Export as default.`
+
+  const meshBackgroundContent = `Create a React component called AnimatedMeshBackground that renders several variants of animated background effects for use behind UI sections. Use only React and Tailwind CSS with inline styles for keyframe animations injected via a <style> tag.
+
+The component renders a full-screen demo page showing 4 background variants in a 2x2 grid (each taking half the viewport height):
+
+1. Aurora: Radial gradients in purple/teal/blue that slowly rotate and shift using a CSS animation. Use 3 overlapping absolutely-positioned radial-gradient divs with different animation delays and durations (15s, 20s, 25s).
+
+2. Dot Matrix: A repeating radial-gradient dot pattern (2px dots, 30px spacing) on a dark background, with a slow parallax drift animation (background-position shifting by 30px over 4s).
+
+3. Noise Mesh: A mesh gradient using multiple conic-gradient and radial-gradient layers blended with mix-blend-mode screen, softly animated with a hue rotation filter animation.
+
+4. Grid Glow: A sharp CSS grid (1px lines, rgba(255,255,255,0.05)) over a dark background, with a centered radial spotlight that follows the mouse position using onMouseMove and inline styles updating a CSS custom property --mx, --my.
+
+Each variant fills its grid cell completely, is labeled with its name in the top-left corner in text-xs text-white/40 font-mono uppercase tracking-widest, and has no visible overflow. Export as default.`
+
+  const profileCardGridContent = `Create a React component called TeamProfileGrid that renders a grid of team member profile cards. Use only React and Tailwind CSS.
+
+Define 9 team members inline with: name, role, department, avatar (use initials with a unique gradient per person), bio (1–2 sentences), stats (projects: number, reviews: number, rating: 1–5), and social links (GitHub, Twitter/X, LinkedIn — as href strings).
+
+Layout: responsive grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-8 bg-slate-950 min-h-screen.
+
+Each card: bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden hover:border-slate-600 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/5 hover:-translate-y-1.
+
+Card structure:
+- Top banner: h-20 bg-gradient-to-br (unique gradient per person using different color pairs)
+- Avatar: w-16 h-16 rounded-2xl border-4 border-slate-900 flex items-center justify-center text-xl font-bold text-white, positioned -mt-8 ml-4 relative z-10 with matching gradient
+- Name + role: mt-2 px-4, name in font-semibold text-white, role in text-xs text-slate-400, department badge in text-xs rounded-full bg-slate-800 text-slate-300 px-2 py-0.5 inline-block mt-1
+- Bio: text-xs text-slate-500 px-4 mt-3 line-clamp-2
+- Stats row: flex justify-around py-3 px-4 border-t border-slate-800 mt-4, each stat has a number in font-semibold text-white and label in text-xs text-slate-500
+- Social icons row: flex gap-2 px-4 pb-4, each icon button has p-1.5 rounded-lg hover:bg-slate-800 text-slate-500 hover:text-white transition-colors
+
+Export as default.`
+
+  const dashboardStatsContent = `Create a React component called StatsOverviewDashboard that renders a real-time-feeling stats dashboard. Use only React and Tailwind CSS.
+
+Background: bg-slate-950 min-h-screen p-6 lg:p-8.
+
+Header row: "Overview" heading in text-2xl font-bold text-white, subtitle "Last 30 days" in text-sm text-slate-400, and a date range badge on the right.
+
+Top stats row: 4 cards in a responsive grid (grid-cols-2 lg:grid-cols-4 gap-4). Each stat card: bg-slate-900 rounded-2xl border border-slate-800 p-5. Content: icon in a colored rounded-xl p-2.5 bg-(color)/10 top-right, metric name in text-xs text-slate-400 uppercase tracking-wider, value in text-3xl font-bold text-white mt-2, change indicator (+12.5%) in text-sm — green with ArrowUpRight if positive, red with ArrowDownRight if negative. Stats: Total Users (23,412, +12.5%), Revenue ($48,295, +8.2%), Active Sessions (1,847, -3.1%), Conversion (4.62%, +0.8%).
+
+Middle section: 2-column grid (grid-cols-1 lg:grid-cols-3 gap-6 mt-6). Left column spans 2: a line chart placeholder built with SVG (700x200 viewBox, grid lines, a smooth cubic bezier path in stroke purple-500 with a gradient fill below). Right column: "Top Channels" list — 5 items each with a colored dot, channel name, bar (bg-slate-800 rounded-full h-1.5 with an inner div width % in bg-purple-500), and percentage text.
+
+Bottom row: "Recent Transactions" table — 5 rows with avatar, name, transaction type badge, amount, and status pill (Completed/Pending/Failed with matching colors). Export as default.`
+
   // ── Prompts ──────────────────────────────────────────────────────────
 
   // 1. Published — Glassmorphism Login Card
@@ -385,7 +469,133 @@ Below the cards, add a mt-20 text-center section:
     },
   })
 
-  // 4. Pending Review — Animated Skeleton Loader
+  // 4. Published — Dark Sidebar Navigation
+  const sidebarPrompt = await prisma.prompt.create({
+    data: {
+      title: 'Dark Sidebar Navigation',
+      slug: 'dark-sidebar-navigation',
+      description: 'A collapsible dark sidebar with grouped nav items, active states, icon-only collapsed mode, and smooth width transition. React + Tailwind only.',
+      type: PromptType.CODE,
+      status: PromptStatus.PUBLISHED,
+      categoryId: categories['headers'].id,
+      content: darkSidebarContent,
+      metadata: { framework: 'react', styling: 'tailwind', estimatedTokens: 1400 },
+      unlockCount: 301,
+      viewCount: 1540,
+      publishedAt: new Date('2026-02-22'),
+      createdAt: new Date('2026-02-05'),
+    },
+  })
+
+  // 5. Published — Toast Notification System
+  const toastPrompt = await prisma.prompt.create({
+    data: {
+      title: 'Toast Notification System',
+      slug: 'toast-notification-system',
+      description: 'A fully working toast/notification system with success, error, warning, and info variants, auto-dismiss, progress bar, and stacking. React + Tailwind only.',
+      type: PromptType.CODE,
+      status: PromptStatus.PUBLISHED,
+      categoryId: categories['modals'].id,
+      content: toastSystemContent,
+      metadata: { framework: 'react', styling: 'tailwind', estimatedTokens: 1600 },
+      unlockCount: 278,
+      viewCount: 1380,
+      publishedAt: new Date('2026-02-25'),
+      createdAt: new Date('2026-02-08'),
+    },
+  })
+
+  // 6. Published — Filterable Data Table
+  const tablePrompt = await prisma.prompt.create({
+    data: {
+      title: 'Filterable Data Table',
+      slug: 'filterable-data-table',
+      description: 'A sortable, filterable data table with search, role filter, pagination, and status badges. 20 rows of mock data included. React + Tailwind only.',
+      type: PromptType.CODE,
+      status: PromptStatus.PUBLISHED,
+      categoryId: categories['tables'].id,
+      content: dataTableContent,
+      metadata: { framework: 'react', styling: 'tailwind', estimatedTokens: 1800 },
+      unlockCount: 422,
+      viewCount: 2100,
+      publishedAt: new Date('2026-03-01'),
+      createdAt: new Date('2026-02-12'),
+    },
+  })
+
+  // 7. Published — Multi-step Checkout Form
+  const checkoutPrompt = await prisma.prompt.create({
+    data: {
+      title: 'Multi-step Checkout Form',
+      slug: 'multi-step-checkout-form',
+      description: 'A 3-step checkout with shipping, payment, and review steps. Step indicator, card brand detection, inline validation, and order summary. React + Tailwind only.',
+      type: PromptType.CODE,
+      status: PromptStatus.PUBLISHED,
+      categoryId: categories['checkout'].id,
+      content: checkoutFormContent,
+      metadata: { framework: 'react', styling: 'tailwind', estimatedTokens: 1900 },
+      unlockCount: 356,
+      viewCount: 1760,
+      publishedAt: new Date('2026-03-05'),
+      createdAt: new Date('2026-02-18'),
+    },
+  })
+
+  // 8. Published — Animated Mesh Background
+  const meshPrompt = await prisma.prompt.create({
+    data: {
+      title: 'Animated Mesh Background',
+      slug: 'animated-mesh-background',
+      description: '4 animated background variants: Aurora, Dot Matrix, Noise Mesh, and Grid Glow with mouse-tracking spotlight. CSS keyframe animations only. React + Tailwind.',
+      type: PromptType.CODE,
+      status: PromptStatus.PUBLISHED,
+      categoryId: categories['backgrounds'].id,
+      content: meshBackgroundContent,
+      metadata: { framework: 'react', styling: 'tailwind', estimatedTokens: 1500 },
+      unlockCount: 198,
+      viewCount: 980,
+      publishedAt: new Date('2026-03-08'),
+      createdAt: new Date('2026-02-22'),
+    },
+  })
+
+  // 9. Published — Team Profile Card Grid
+  const profileGridPrompt = await prisma.prompt.create({
+    data: {
+      title: 'Team Profile Card Grid',
+      slug: 'team-profile-card-grid',
+      description: 'A responsive 3-column grid of team profile cards with avatar, bio, stats, and social links. Hover lift effect and unique gradient per card. React + Tailwind only.',
+      type: PromptType.CODE,
+      status: PromptStatus.PUBLISHED,
+      categoryId: categories['cards'].id,
+      content: profileCardGridContent,
+      metadata: { framework: 'react', styling: 'tailwind', estimatedTokens: 1700 },
+      unlockCount: 245,
+      viewCount: 1220,
+      publishedAt: new Date('2026-03-12'),
+      createdAt: new Date('2026-02-26'),
+    },
+  })
+
+  // 10. Published — Stats Overview Dashboard
+  const statsPrompt = await prisma.prompt.create({
+    data: {
+      title: 'Stats Overview Dashboard',
+      slug: 'stats-overview-dashboard',
+      description: 'A complete analytics dashboard with stat cards, SVG line chart, top channels bar list, and recent transactions table. Dark mode, fully responsive. React + Tailwind only.',
+      type: PromptType.CODE,
+      status: PromptStatus.PUBLISHED,
+      categoryId: categories['dashboards'].id,
+      content: dashboardStatsContent,
+      metadata: { framework: 'react', styling: 'tailwind', estimatedTokens: 2100 },
+      unlockCount: 334,
+      viewCount: 1650,
+      publishedAt: new Date('2026-03-15'),
+      createdAt: new Date('2026-03-01'),
+    },
+  })
+
+  // 11. Pending Review — Animated Skeleton Loader
   const skeletonPrompt = await prisma.prompt.create({
     data: {
       title: 'Animated Skeleton Loader Kit',
@@ -429,7 +639,7 @@ Below the cards, add a mt-20 text-center section:
     },
   })
 
-  console.log('  Created 5 prompts')
+  console.log('  Created 12 prompts')
 
   // ── Prompt Tags ──────────────────────────────────────────────────────
 
@@ -452,6 +662,37 @@ Below the cards, add a mt-20 text-center section:
       { promptId: pricingPrompt.id, tagId: tags['minimal'].id },
       { promptId: pricingPrompt.id, tagId: tags['responsive'].id },
       { promptId: pricingPrompt.id, tagId: tags['dark-mode'].id },
+      // Dark Sidebar Navigation
+      { promptId: sidebarPrompt.id, tagId: tags['tailwind'].id },
+      { promptId: sidebarPrompt.id, tagId: tags['react'].id },
+      { promptId: sidebarPrompt.id, tagId: tags['responsive'].id },
+      { promptId: sidebarPrompt.id, tagId: tags['dark-mode'].id },
+      // Toast Notification System
+      { promptId: toastPrompt.id, tagId: tags['tailwind'].id },
+      { promptId: toastPrompt.id, tagId: tags['react'].id },
+      { promptId: toastPrompt.id, tagId: tags['animated'].id },
+      // Filterable Data Table
+      { promptId: tablePrompt.id, tagId: tags['tailwind'].id },
+      { promptId: tablePrompt.id, tagId: tags['react'].id },
+      { promptId: tablePrompt.id, tagId: tags['responsive'].id },
+      // Multi-step Checkout Form
+      { promptId: checkoutPrompt.id, tagId: tags['tailwind'].id },
+      { promptId: checkoutPrompt.id, tagId: tags['react'].id },
+      { promptId: checkoutPrompt.id, tagId: tags['responsive'].id },
+      // Animated Mesh Background
+      { promptId: meshPrompt.id, tagId: tags['tailwind'].id },
+      { promptId: meshPrompt.id, tagId: tags['react'].id },
+      { promptId: meshPrompt.id, tagId: tags['animated'].id },
+      { promptId: meshPrompt.id, tagId: tags['gradient'].id },
+      // Team Profile Card Grid
+      { promptId: profileGridPrompt.id, tagId: tags['tailwind'].id },
+      { promptId: profileGridPrompt.id, tagId: tags['react'].id },
+      { promptId: profileGridPrompt.id, tagId: tags['responsive'].id },
+      // Stats Overview Dashboard
+      { promptId: statsPrompt.id, tagId: tags['tailwind'].id },
+      { promptId: statsPrompt.id, tagId: tags['react'].id },
+      { promptId: statsPrompt.id, tagId: tags['dark-mode'].id },
+      { promptId: statsPrompt.id, tagId: tags['responsive'].id },
       // Skeleton Loader (pending review)
       { promptId: skeletonPrompt.id, tagId: tags['tailwind'].id },
       { promptId: skeletonPrompt.id, tagId: tags['react'].id },

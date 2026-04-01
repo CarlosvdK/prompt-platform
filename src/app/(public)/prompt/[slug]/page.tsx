@@ -5,6 +5,7 @@ import { PromptDetail } from '@/components/prompts/prompt-detail'
 import { PromptPreview } from '@/components/prompts/prompt-preview'
 import { PromptContent } from '@/components/prompts/prompt-content'
 import { UnlockGate } from '@/components/unlock/unlock-gate'
+import { BackButton } from '@/components/shared/back-button'
 
 interface PromptPageProps {
   params: Promise<{ slug: string }>
@@ -47,6 +48,7 @@ export default async function PromptPage({ params }: PromptPageProps) {
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
+      <BackButton />
       <PromptDetail prompt={prompt} />
 
       {prompt.previews.length > 0 && (

@@ -9,7 +9,16 @@ export async function GET(
 
   const prompt = await db.prompt.findUnique({
     where: { id },
-    select: { metadata: true, title: true },
+    select: {
+      metadata: true,
+      title: true,
+      previews: {
+        where: { type: 'code_snippet' },
+        orderBy: { sortOrder: 'asc' },
+        take: 1,
+        select: { content: true },
+      },
+    },
   })
 
   if (!prompt) {
@@ -17,7 +26,7 @@ export async function GET(
   }
 
   const metadata = prompt.metadata as Record<string, any> | null
-  const previewCode = metadata?.previewCode
+  const previewCode = metadata?.previewCode ?? prompt.previews[0]?.content ?? null
 
   if (!previewCode) {
     return new NextResponse(generatePlaceholderHTML(prompt.title), {
@@ -35,8 +44,21 @@ export async function GET(
   })
 }
 
+function sanitizeComponentCode(code: string): string {
+  // Strip import statements — all deps are provided as globals
+  let out = code.replace(/^import\s[^;]+;?\s*$/gm, '')
+  // Replace "export default" with window assignment
+  out = out.replace(/export\s+default\s+/g, 'window.__COMPONENT__ = ')
+  // Strip named exports so they become plain declarations
+  out = out.replace(/^export\s+(function|const|class)\s+/gm, '$1 ')
+  return out.trim()
+}
+
 function generatePreviewHTML(componentCode: string): string {
-  // Escape the code for embedding in a script tag
+  const sanitized = sanitizeComponentCode(componentCode)
+  // Base64-encode so backticks, </script>, quotes etc. can't break the HTML
+  const encoded = Buffer.from(sanitized).toString('base64')
+
   return `<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -44,131 +66,75 @@ function generatePreviewHTML(componentCode: string): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Preview</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
-          },
-        },
-      },
-    }
-  </script>
+  <script>tailwind.config = { darkMode: 'class' }</script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #09090b;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Inter', system-ui, sans-serif;
-      overflow: hidden;
-    }
-    #root {
-      width: 100%;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    /* Smooth loading */
-    #root { opacity: 0; transition: opacity 0.3s ease; }
-    #root.loaded { opacity: 1; }
-
-    #loading {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #09090b;
-      z-index: 50;
-      transition: opacity 0.3s ease;
-    }
-    #loading.hidden { opacity: 0; pointer-events: none; }
-    .spinner {
-      width: 24px;
-      height: 24px;
-      border: 2px solid rgba(102,126,234,0.2);
-      border-top-color: #667eea;
-      border-radius: 50%;
-      animation: spin 0.6s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#09090b;min-height:100vh;font-family:'Inter',system-ui,sans-serif}
+    #root{opacity:0;transition:opacity 0.3s ease;width:100%;min-height:100vh;display:flex;align-items:center;justify-content:center}
+    #root.loaded{opacity:1}
+    #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#09090b;z-index:50;transition:opacity 0.3s}
+    #loading.hidden{opacity:0;pointer-events:none}
+    .spinner{width:24px;height:24px;border:2px solid rgba(102,126,234,0.2);border-top-color:#667eea;border-radius:50%;animation:spin 0.6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
   <div id="loading"><div class="spinner"></div></div>
   <div id="root"></div>
-  <script type="text/babel" data-type="module">
-    // Provide lucide-react stub for icons
-    const lucideIcons = new Proxy({}, {
-      get: (target, prop) => {
-        if (prop === '__esModule') return true;
-        // Return a simple SVG icon placeholder
-        return function Icon(props) {
-          return React.createElement('svg', {
-            xmlns: 'http://www.w3.org/2000/svg',
-            width: props?.size || 24,
-            height: props?.size || 24,
-            viewBox: '0 0 24 24',
-            fill: 'none',
-            stroke: 'currentColor',
-            strokeWidth: 2,
-            strokeLinecap: 'round',
-            strokeLinejoin: 'round',
-            className: props?.className || '',
-            ...props,
-          }, React.createElement('circle', { cx: 12, cy: 12, r: 10 }));
-        };
+  <script>
+    // Globals: React hooks + lucide-react stub
+    const { useState,useEffect,useRef,useCallback,useMemo,useContext,
+            useReducer,createContext,Fragment,forwardRef } = React;
+    Object.assign(window,{useState,useEffect,useRef,useCallback,useMemo,
+      useContext,useReducer,createContext,Fragment,forwardRef});
+
+    const lucideProxy = new Proxy({},{
+      get:(_,prop)=>{
+        if(prop==='__esModule') return true;
+        return ({size,className,...rest}={})=>React.createElement('svg',{
+          xmlns:'http://www.w3.org/2000/svg',width:size||24,height:size||24,
+          viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',
+          strokeWidth:2,strokeLinecap:'round',strokeLinejoin:'round',
+          className:className||'',...rest
+        },React.createElement('circle',{cx:12,cy:12,r:10}));
       }
     });
+    window.require = m => m==='react'?React:m==='lucide-react'?lucideProxy:{};
 
-    // Make lucide-react available as a module
-    window.require = function(mod) {
-      if (mod === 'lucide-react') return lucideIcons;
-      if (mod === 'react') return React;
-      return {};
-    };
+    window.addEventListener('load', function() {
+      try {
+        const src = atob('${encoded}');
+        const result = Babel.transform(src, {
+          presets: [
+            ['react',{}],
+            ['typescript',{allExtensions:true,isTSX:true}]
+          ],
+          filename:'component.tsx'
+        });
+        // Run in global scope
+        (0,eval)(result.code);
 
-    try {
-      ${componentCode.replace(/export\s+default\s+/g, 'window.__COMPONENT__ = ')}
-
-      // Also try to capture named exports
-      if (!window.__COMPONENT__) {
-        // Look for function declarations
-        const match = ${JSON.stringify(componentCode)}.match(/(?:function|const)\\s+(\\w+)/g);
-        if (match) {
-          const lastName = match[match.length - 1].replace(/(?:function|const)\\s+/, '');
-          if (typeof window[lastName] === 'function') {
-            window.__COMPONENT__ = window[lastName];
-          }
+        if (window.__COMPONENT__) {
+          ReactDOM.createRoot(document.getElementById('root'))
+            .render(React.createElement(window.__COMPONENT__));
+          setTimeout(()=>{
+            document.getElementById('root').classList.add('loaded');
+            document.getElementById('loading').classList.add('hidden');
+          },150);
+        } else {
+          throw new Error('No default export found');
         }
+      } catch(err) {
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('root').innerHTML =
+          '<div style="color:#ef4444;font-family:monospace;padding:2rem;font-size:14px;white-space:pre-wrap">Error: '+err.message+'</div>';
+        document.getElementById('root').classList.add('loaded');
       }
-
-      if (window.__COMPONENT__) {
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(React.createElement(window.__COMPONENT__));
-        setTimeout(() => {
-          document.getElementById('root').classList.add('loaded');
-          document.getElementById('loading').classList.add('hidden');
-        }, 100);
-      } else {
-        throw new Error('No component found');
-      }
-    } catch (err) {
-      document.getElementById('loading').classList.add('hidden');
-      document.getElementById('root').innerHTML = '<div style="color:#ef4444;font-family:monospace;padding:2rem;font-size:14px;">Error rendering component: ' + err.message + '</div>';
-      document.getElementById('root').classList.add('loaded');
-    }
+    });
   </script>
 </body>
 </html>`

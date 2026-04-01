@@ -30,6 +30,7 @@ model User {
   unlockEvents    UnlockEvent[]
   auditLogs       AuditLog[]
   agentRuns       AgentRun[]
+  trainingLabels  TrainingLabel[]
 
   @@map("users")
 }
@@ -143,14 +144,15 @@ model Prompt {
   updatedAt   DateTime     @updatedAt
   publishedAt DateTime?
 
-  category     Category         @relation(fields: [categoryId], references: [id])
-  tags         PromptTag[]
-  versions     PromptVersion[]
-  previews     PromptPreview[]
-  drafts       PromptDraft[]
-  reviews      ReviewDecision[]
-  unlockEvents UnlockEvent[]
-  auditLogs    AuditLog[]
+  category       Category         @relation(fields: [categoryId], references: [id])
+  tags           PromptTag[]
+  versions       PromptVersion[]
+  previews       PromptPreview[]
+  drafts         PromptDraft[]
+  reviews        ReviewDecision[]
+  unlockEvents   UnlockEvent[]
+  auditLogs      AuditLog[]
+  trainingLabels TrainingLabel[]
 
   @@index([status])
   @@index([categoryId])
@@ -309,4 +311,26 @@ model AuditLog {
   @@index([userId])
   @@index([promptId])
   @@map("audit_logs")
+}
+
+enum TrainingLabelValue {
+  GOOD
+  BAD
+}
+
+model TrainingLabel {
+  id        String             @id @default(cuid())
+  promptId  String
+  adminId   String
+  label     TrainingLabelValue
+  notes     String?            @db.Text
+  createdAt DateTime           @default(now())
+
+  prompt Prompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  admin  User   @relation(fields: [adminId], references: [id])
+
+  @@unique([promptId, adminId])
+  @@index([promptId])
+  @@index([adminId])
+  @@map("training_labels")
 }

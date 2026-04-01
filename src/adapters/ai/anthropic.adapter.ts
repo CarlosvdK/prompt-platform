@@ -13,7 +13,7 @@ export class AnthropicAdapter implements AIProvider {
 
   async generateCompletion(params: CompletionParams): Promise<CompletionResult> {
     const response = await this.client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-6',
       max_tokens: params.maxTokens ?? 4096,
       system: params.systemPrompt ?? '',
       messages: [{ role: 'user', content: params.prompt }],
