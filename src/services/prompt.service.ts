@@ -22,6 +22,7 @@ const promptSummarySelect = {
   type: true,
   status: true,
   thumbnailUrl: true,
+  metadata: true,
   viewCount: true,
   unlockCount: true,
   createdAt: true,
@@ -31,6 +32,11 @@ const promptSummarySelect = {
     select: {
       tag: { select: { id: true, name: true, slug: true } },
     },
+  },
+  previews: {
+    where: { type: 'code_snippet' },
+    select: { id: true },
+    take: 1,
   },
 }
 
@@ -75,7 +81,11 @@ export async function listPublishedPrompts(
     db.prompt.count({ where }),
   ])
 
-  const data = rawData.map(mapTags) as PromptSummary[]
+  const data = rawData.map((p) => {
+    const mapped = mapTags(p)
+    const { previews, ...rest } = mapped
+    return { ...rest, hasCodePreview: previews.length > 0 }
+  }) as PromptSummary[]
 
   return { data, total, page, limit, totalPages: Math.ceil(total / limit) }
 }

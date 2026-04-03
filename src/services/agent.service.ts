@@ -8,39 +8,9 @@ import { logAction } from './audit.service'
 import { submitForReview } from './review.service'
 import { GenerationRequest, AgentRunDetail, AgentRunSummary, PaginatedResult } from '@/types'
 import { logger } from '@/lib/logger'
+import { AGENT_CONFIGS, getAgentConfig, buildSystemPrompt, getRandomTopic } from '@/config/agents'
 
-const UI_GENERATION_SYSTEM_PROMPT = `You are a senior UI component prompt engineer for Softset. You create structured prompts that produce identical React + Tailwind CSS components when given to ANY large language model.
-
-PROMPT STRUCTURE REQUIREMENTS:
-Every prompt you create MUST have these sections:
-1. **Overview** — What the component is, its purpose, and visual style
-2. **Requirements** — Exact list of elements, interactions, and states
-3. **Styling Specification** — Exact Tailwind classes for every element:
-   - Colors: use specific Tailwind classes (bg-zinc-900, text-blue-400, NOT "dark background")
-   - Spacing: exact padding/margin values (p-6, gap-4, NOT "some spacing")
-   - Typography: font sizes, weights, line heights (text-lg font-semibold)
-   - Borders: exact border classes (border border-white/10 rounded-xl)
-   - Responsive: include sm:, md:, lg: breakpoints
-   - Dark mode: component must look great on dark backgrounds (#09090b)
-4. **Expected Output** — The COMPLETE React component code that this prompt should produce. This is the reference implementation.
-
-COMPONENT RULES:
-- Single-file React functional component with default export
-- Tailwind CSS utility classes ONLY — no custom CSS, no CSS modules
-- Import only from: react, lucide-react (for icons)
-- Self-contained — no props required, no external state
-- Must render correctly at 1920x1080 on a dark background
-- Must be responsive (mobile-first with breakpoints)
-
-OUTPUT FORMAT — respond with valid JSON only:
-{
-  "title": "Component Name (e.g., Glassmorphism Login Card)",
-  "description": "One concise sentence describing the component",
-  "content": "The full structured prompt text (400-800 words) with all 4 sections",
-  "previewCode": "The complete React+Tailwind component code",
-  "tags": ["tailwind", "react", "dark-mode"],
-  "categorySlug": "authentication"
-}`
+const FALLBACK_SYSTEM_PROMPT = 'You are a prompt engineering expert. Generate a well-structured prompt based on the given parameters. Return a JSON object with title, description, content, previewCode, tags, and categorySlug fields.'
 
 export async function requestGeneration(params: GenerationRequest, userId?: string) {
   const run = await db.agentRun.create({
@@ -85,16 +55,22 @@ export async function executeGeneration(runId: string) {
     const input = run.input as Record<string, unknown>
     const aiProvider = getAIProvider()
 
-    const isUIGeneration = run.skill === 'ui-component-generation'
+    // Look up specialized agent config
+    const agentConfig = getAgentConfig(run.skill)
+    const isUIGeneration = !!agentConfig || run.skill === 'ui-component-generation'
 
     // Build prompt from input parameters
     const parts: string[] = []
-    if (isUIGeneration) {
+    if (agentConfig) {
+      const topic = (input.topic as string) ?? getRandomTopic(agentConfig)
+      parts.push(`Create a UI component prompt for: "${topic}"`)
+      parts.push(`Category: ${agentConfig.categorySlug}`)
+      if (input.instructions) parts.push(`Additional instructions: ${input.instructions}`)
+      parts.push('Make it visually impressive, production-ready, and unique.')
+    } else if (isUIGeneration) {
       parts.push(`Create a UI component prompt for: "${input.topic ?? input.variation ?? 'a modern component'}"`)
       if (input.category) parts.push(`Category: ${input.category}`)
-      parts.push(
-        'The component should use React and Tailwind CSS. Make it visually impressive and production-ready.',
-      )
+      parts.push('The component should use React and Tailwind CSS. Make it visually impressive and production-ready.')
     } else {
       parts.push(`Generate a high-quality prompt for the following:`)
       parts.push(`Skill: ${run.skill}`)
@@ -104,9 +80,9 @@ export async function executeGeneration(runId: string) {
       if (input.instructions) parts.push(`Instructions: ${input.instructions}`)
     }
 
-    const systemPrompt = isUIGeneration
-      ? UI_GENERATION_SYSTEM_PROMPT
-      : 'You are a prompt engineering expert. Generate a well-structured prompt based on the given parameters. Return a JSON object with title, description, and content fields.'
+    const systemPrompt = agentConfig
+      ? buildSystemPrompt(agentConfig)
+      : FALLBACK_SYSTEM_PROMPT
 
     const result = await aiProvider.generateCompletion({
       prompt: parts.join('\n'),
@@ -325,6 +301,18 @@ export async function acceptDraft(draftId: string, userId?: string) {
     data: { promptId: prompt.id },
   })
 
+  // Create PromptPreview from previewCode if available
+  if (draftMeta.previewCode) {
+    await db.promptPreview.create({
+      data: {
+        promptId: prompt.id,
+        type: 'code_snippet',
+        content: draftMeta.previewCode as string,
+        sortOrder: 1,
+      },
+    })
+  }
+
   // Store tags from generation metadata
   if (Array.isArray(draftMeta.tags) && draftMeta.tags.length > 0) {
     const existingTags = await db.tag.findMany({
@@ -349,6 +337,50 @@ export async function acceptDraft(draftId: string, userId?: string) {
   })
 
   return prompt
+}
+
+export async function getDraft(draftId: string) {
+  const draft = await db.promptDraft.findUnique({
+    where: { id: draftId },
+    include: {
+      agentRun: { select: { id: true, skill: true, status: true } },
+    },
+  })
+  if (!draft) throw new NotFoundError('Draft')
+  return draft
+}
+
+export async function batchGenerate(agentIds: string[], userId?: string, topic?: string) {
+  const configs = agentIds.length > 0
+    ? AGENT_CONFIGS.filter((c) => agentIds.includes(c.id))
+    : AGENT_CONFIGS
+
+  const runs = await Promise.all(
+    configs.map((config) =>
+      requestGeneration(
+        {
+          skill: config.id,
+          input: {
+            topic: topic ?? getRandomTopic(config),
+            category: config.categorySlug,
+          },
+        },
+        userId,
+      ),
+    ),
+  )
+
+  return runs
+}
+
+export function listAgentConfigs() {
+  return AGENT_CONFIGS.map(({ id, name, description, categorySlug, exampleTopics }) => ({
+    id,
+    name,
+    description,
+    categorySlug,
+    exampleTopics,
+  }))
 }
 
 export async function rejectDraft(draftId: string, userId?: string) {

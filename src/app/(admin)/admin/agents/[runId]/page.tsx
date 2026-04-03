@@ -4,6 +4,8 @@ import { getRunStatus } from '@/services/agent.service'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { DraftActions } from '@/components/admin/draft-actions'
+import { DraftPreview } from '@/components/admin/draft-preview'
 
 interface AgentRunDetailPageProps {
   params: Promise<{ runId: string }>
@@ -20,8 +22,14 @@ export default async function AgentRunDetailPage({ params }: AgentRunDetailPageP
   }
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-5xl">
       <div className="flex items-center gap-3 mb-6">
+        <Link
+          href="/admin/agents"
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          ← Back
+        </Link>
         <h1 className="text-2xl font-bold">Agent Run</h1>
         <StatusBadge status={run.status} />
       </div>
@@ -53,15 +61,7 @@ export default async function AgentRunDetailPage({ params }: AgentRunDetailPageP
         </div>
       </div>
 
-      {/* Input Parameters */}
-      <section className="mb-8">
-        <h2 className="text-lg font-semibold mb-3">Input Parameters</h2>
-        <pre className="rounded-lg border border-border bg-muted p-4 text-sm overflow-x-auto">
-          {JSON.stringify(run.input, null, 2)}
-        </pre>
-      </section>
-
-      {/* Output / Error */}
+      {/* Error */}
       {run.error && (
         <section className="mb-8">
           <h2 className="text-lg font-semibold mb-3">Error</h2>
@@ -71,45 +71,62 @@ export default async function AgentRunDetailPage({ params }: AgentRunDetailPageP
         </section>
       )}
 
-      {run.output && (
-        <section className="mb-8">
-          <h2 className="text-lg font-semibold mb-3">Output</h2>
-          <pre className="rounded-lg border border-border bg-muted p-4 text-sm overflow-x-auto">
-            {JSON.stringify(run.output, null, 2)}
-          </pre>
-        </section>
-      )}
-
-      {/* Drafts */}
+      {/* Drafts with Preview */}
       {run.drafts.length > 0 && (
         <section>
-          <h2 className="text-lg font-semibold mb-3">Generated Drafts</h2>
-          <div className="space-y-4">
+          <h2 className="text-lg font-semibold mb-4">Generated Drafts</h2>
+          <div className="space-y-6">
             {run.drafts.map((draft) => (
               <Card key={draft.id}>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-base">{draft.title}</CardTitle>
-                    <Badge variant="secondary">{draft.type}</Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary">{draft.type}</Badge>
+                      {draft.promptId ? (
+                        <Link
+                          href={`/admin/prompts/${draft.promptId}`}
+                          className="text-sm text-primary hover:underline"
+                        >
+                          View Prompt →
+                        </Link>
+                      ) : (
+                        <DraftActions draftId={draft.id} />
+                      )}
+                    </div>
                   </div>
                 </CardHeader>
-                <CardContent className="text-sm text-muted-foreground">
-                  {draft.promptId ? (
-                    <Link
-                      href={`/admin/prompts/${draft.promptId}`}
-                      className="text-primary underline"
-                    >
-                      View linked prompt
-                    </Link>
-                  ) : (
-                    <span>Not yet linked to a prompt</span>
-                  )}
+                <CardContent>
+                  <DraftPreview draftId={draft.id} />
                 </CardContent>
               </Card>
             ))}
           </div>
         </section>
       )}
+
+      {/* Input/Output Debug */}
+      <details className="mt-8">
+        <summary className="text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors">
+          Debug: Input & Output
+        </summary>
+        <div className="mt-4 space-y-4">
+          <div>
+            <h3 className="text-sm font-medium mb-2">Input</h3>
+            <pre className="rounded-lg border border-border bg-muted p-4 text-xs overflow-x-auto">
+              {JSON.stringify(run.input, null, 2)}
+            </pre>
+          </div>
+          {run.output && (
+            <div>
+              <h3 className="text-sm font-medium mb-2">Output</h3>
+              <pre className="rounded-lg border border-border bg-muted p-4 text-xs overflow-x-auto">
+                {JSON.stringify(run.output, null, 2)}
+              </pre>
+            </div>
+          )}
+        </div>
+      </details>
     </div>
   )
 }

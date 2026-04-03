@@ -961,6 +961,388 @@ export default function MinimalPricingTable() {
 }`,
         sortOrder: 1,
       },
+      // ── Dark Sidebar Navigation ──
+      {
+        promptId: sidebarPrompt.id,
+        type: 'code_snippet',
+        content: `export default function DarkSidebarNavigation() {
+  const [collapsed, setCollapsed] = useState(false);
+  const [active, setActive] = useState("Dashboard");
+  const navGroups = [
+    { label: "Main", items: [{ name: "Dashboard", icon: "grid" }, { name: "Analytics", icon: "chart" }, { name: "Projects", icon: "folder" }] },
+    { label: "Manage", items: [{ name: "Team", icon: "users" }, { name: "Settings", icon: "gear" }] },
+  ];
+  const iconMap = {
+    grid: React.createElement("svg", {width:20,height:20,viewBox:"0 0 20 20",fill:"none"}, React.createElement("rect",{x:2,y:2,width:7,height:7,rx:1.5,fill:"currentColor"}), React.createElement("rect",{x:11,y:2,width:7,height:7,rx:1.5,fill:"currentColor",opacity:0.5}), React.createElement("rect",{x:2,y:11,width:7,height:7,rx:1.5,fill:"currentColor",opacity:0.5}), React.createElement("rect",{x:11,y:11,width:7,height:7,rx:1.5,fill:"currentColor",opacity:0.3})),
+    chart: React.createElement("svg", {width:20,height:20,viewBox:"0 0 20 20",fill:"none"}, React.createElement("rect",{x:2,y:10,width:3,height:8,rx:1,fill:"currentColor"}), React.createElement("rect",{x:7,y:6,width:3,height:12,rx:1,fill:"currentColor",opacity:0.7}), React.createElement("rect",{x:12,y:3,width:3,height:15,rx:1,fill:"currentColor",opacity:0.5})),
+    folder: React.createElement("svg", {width:20,height:20,viewBox:"0 0 20 20",fill:"none"}, React.createElement("path",{d:"M2 5a2 2 0 012-2h4l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V5z",fill:"currentColor"})),
+    users: React.createElement("svg", {width:20,height:20,viewBox:"0 0 20 20",fill:"none"}, React.createElement("circle",{cx:7,cy:7,r:3,fill:"currentColor"}), React.createElement("circle",{cx:14,cy:7,r:2.5,fill:"currentColor",opacity:0.5}), React.createElement("path",{d:"M1 17c0-3 2.5-5 6-5s6 2 6 5",fill:"currentColor",opacity:0.7})),
+    gear: React.createElement("svg", {width:20,height:20,viewBox:"0 0 20 20",fill:"none"}, React.createElement("circle",{cx:10,cy:10,r:3,stroke:"currentColor",strokeWidth:2,fill:"none"}), React.createElement("circle",{cx:10,cy:2,r:1.5,fill:"currentColor"}), React.createElement("circle",{cx:10,cy:18,r:1.5,fill:"currentColor"}), React.createElement("circle",{cx:2,cy:10,r:1.5,fill:"currentColor"}), React.createElement("circle",{cx:18,cy:10,r:1.5,fill:"currentColor"})),
+  };
+  return (
+    <div className="min-h-screen bg-slate-950 flex">
+      <aside className="flex flex-col border-r border-slate-800/60 bg-slate-950 transition-all duration-300 ease-in-out" style={{width: collapsed ? 72 : 260}}>
+        <div className="flex items-center gap-3 px-5 h-16 border-b border-slate-800/60">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shrink-0"><span className="text-white font-bold text-sm">S</span></div>
+          {!collapsed && <span className="text-white font-semibold text-lg tracking-tight">Softset</span>}
+        </div>
+        <nav className="flex-1 py-4 space-y-6 overflow-hidden">
+          {navGroups.map((group) => (
+            <div key={group.label}>
+              {!collapsed && <p className="px-5 mb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-500">{group.label}</p>}
+              <div className="space-y-0.5">{group.items.map((item) => {
+                const isActive = active === item.name;
+                return (<button key={item.name} onClick={() => setActive(item.name)} className={"w-full flex items-center gap-3 px-5 py-2.5 text-sm font-medium transition-all duration-150 " + (isActive ? "text-white bg-indigo-500/15 border-r-2 border-indigo-400" : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50")}>
+                  <span className={isActive ? "text-indigo-400" : "text-slate-500"}>{iconMap[item.icon]}</span>
+                  {!collapsed && <span>{item.name}</span>}
+                </button>);
+              })}</div>
+            </div>
+          ))}
+        </nav>
+        <div className="px-3 py-2 border-t border-slate-800/60">
+          <button onClick={() => setCollapsed(!collapsed)} className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 transition-colors text-sm">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d={collapsed ? "M7 4l5 5-5 5" : "M11 4l-5 5 5 5"} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            {!collapsed && <span>Collapse</span>}
+          </button>
+        </div>
+        <div className="px-4 py-3 border-t border-slate-800/60 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shrink-0"><span className="text-white text-sm font-semibold">SC</span></div>
+          {!collapsed && <div className="overflow-hidden"><p className="text-sm font-medium text-slate-200 truncate">Sarah Chen</p><p className="text-xs text-slate-500 truncate">admin@softset.dev</p></div>}
+        </div>
+      </aside>
+      <div className="flex-1 flex items-center justify-center"><div className="text-center"><h1 className="text-2xl font-bold text-white mb-2">{active}</h1><p className="text-slate-500 text-sm">Select a page from the sidebar</p></div></div>
+    </div>
+  );
+}`,
+        sortOrder: 1,
+      },
+      // ── Toast Notification System ──
+      {
+        promptId: toastPrompt.id,
+        type: 'code_snippet',
+        content: `export default function ToastNotificationSystem() {
+  const [toasts, setToasts] = useState([
+    { id: 1, type: "success", title: "Deployment Complete", message: "Your application was deployed to production successfully.", progress: 75 },
+    { id: 2, type: "error", title: "Build Failed", message: "Pipeline step 'test:e2e' exited with code 1.", progress: 40 },
+    { id: 3, type: "warning", title: "Rate Limit Warning", message: "You've used 85% of your API quota this billing cycle.", progress: 60 },
+    { id: 4, type: "info", title: "New Version Available", message: "v2.4.0 is ready. Review the changelog before updating.", progress: 90 },
+  ]);
+  const config = {
+    success: { bg: "bg-emerald-950/90", border: "border-emerald-500/30", iconBg: "bg-emerald-500/20", iconColor: "text-emerald-400", progressBg: "bg-emerald-500" },
+    error: { bg: "bg-red-950/90", border: "border-red-500/30", iconBg: "bg-red-500/20", iconColor: "text-red-400", progressBg: "bg-red-500" },
+    warning: { bg: "bg-amber-950/90", border: "border-amber-500/30", iconBg: "bg-amber-500/20", iconColor: "text-amber-400", progressBg: "bg-amber-500" },
+    info: { bg: "bg-blue-950/90", border: "border-blue-500/30", iconBg: "bg-blue-500/20", iconColor: "text-blue-400", progressBg: "bg-blue-500" },
+  };
+  const icons = { success: "✓", error: "✕", warning: "⚠", info: "ℹ" };
+  const removeToast = (id) => setToasts((prev) => prev.filter((t) => t.id !== id));
+  return (
+    <div className="min-h-screen bg-[#09090b] flex items-center justify-center p-8 relative">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold text-white mb-3">Notification System</h1>
+        <p className="text-slate-400 text-lg">Real-time alerts and status updates</p>
+        <button className="mt-6 px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors" onClick={() => setToasts([{ id: Date.now(), type: "success", title: "Action Complete", message: "Your request was processed.", progress: 95 }, ...toasts])}>Trigger Toast</button>
+      </div>
+      <div className="fixed bottom-6 right-6 flex flex-col-reverse gap-3 z-50" style={{maxWidth: 400}}>
+        {toasts.map((toast, index) => {
+          const c = config[toast.type];
+          return (
+            <div key={toast.id} className={c.bg + " " + c.border + " border rounded-xl p-4 backdrop-blur-xl shadow-2xl transition-all duration-300"} style={{width: 380, opacity: 1 - index * 0.08, transform: "scale(" + (1 - index * 0.02) + ")"}}>
+              <div className="flex items-start gap-3">
+                <div className={c.iconBg + " " + c.iconColor + " w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5 text-lg font-bold"}>{icons[toast.type]}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-sm font-semibold text-white">{toast.title}</h4>
+                    <button onClick={() => removeToast(toast.id)} className="text-slate-500 hover:text-slate-300 transition-colors ml-2 text-xs">✕</button>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1 leading-relaxed">{toast.message}</p>
+                  <div className="mt-3 h-1 bg-slate-800 rounded-full overflow-hidden">
+                    <div className={"h-full " + c.progressBg + " rounded-full transition-all duration-1000"} style={{width: toast.progress + "%"}} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}`,
+        sortOrder: 1,
+      },
+      // ── Filterable Data Table ──
+      {
+        promptId: tablePrompt.id,
+        type: 'code_snippet',
+        content: `export default function FilterableDataTable() {
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("All");
+  const users = [
+    { name: "Olivia Martin", email: "olivia@company.com", role: "Admin", status: "Active", joined: "Jan 12, 2025" },
+    { name: "James Wilson", email: "james@company.com", role: "Editor", status: "Active", joined: "Feb 3, 2025" },
+    { name: "Sophia Lee", email: "sophia@company.com", role: "User", status: "Pending", joined: "Mar 18, 2025" },
+    { name: "Liam Anderson", email: "liam@company.com", role: "Admin", status: "Active", joined: "Nov 29, 2024" },
+    { name: "Emma Davis", email: "emma@company.com", role: "User", status: "Inactive", joined: "Aug 7, 2024" },
+    { name: "Noah Brown", email: "noah@company.com", role: "Editor", status: "Active", joined: "Dec 14, 2024" },
+    { name: "Ava Garcia", email: "ava@company.com", role: "User", status: "Active", joined: "Mar 1, 2025" },
+    { name: "Ethan Miller", email: "ethan@company.com", role: "User", status: "Pending", joined: "Mar 22, 2025" },
+  ];
+  const filtered = users.filter((u) => {
+    const matchesSearch = u.name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase());
+    const matchesRole = roleFilter === "All" || u.role === roleFilter;
+    return matchesSearch && matchesRole;
+  });
+  const statusStyles = { Active: "bg-emerald-500/15 text-emerald-400", Inactive: "bg-slate-500/15 text-slate-400", Pending: "bg-amber-500/15 text-amber-400" };
+  const roleColors = { Admin: "text-purple-400", Editor: "text-sky-400", User: "text-slate-400" };
+  return (
+    <div className="min-h-screen bg-slate-950 p-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-6"><h1 className="text-2xl font-bold text-white mb-1">Team Members</h1><p className="text-slate-500 text-sm">Manage your team and their account permissions.</p></div>
+        <div className="flex items-center gap-3 mb-4">
+          <input type="text" placeholder="Search by name or email..." value={search} onChange={(e) => setSearch(e.target.value)} className="flex-1 max-w-sm pl-4 pr-4 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all" />
+          <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className="px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/40">
+            <option value="All">All Roles</option><option value="Admin">Admin</option><option value="User">User</option><option value="Editor">Editor</option>
+          </select>
+        </div>
+        <div className="border border-slate-800 rounded-xl overflow-hidden">
+          <table className="w-full">
+            <thead><tr className="bg-slate-900/80">{["Name","Email","Role","Status","Joined"].map((h) => (<th key={h} className="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">{h}</th>))}</tr></thead>
+            <tbody className="divide-y divide-slate-800/60">
+              {filtered.map((user, i) => (
+                <tr key={i} className="hover:bg-slate-900/40 transition-colors">
+                  <td className="px-5 py-3.5"><div className="flex items-center gap-3"><div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center"><span className="text-white text-xs font-semibold">{user.name.split(" ").map((n) => n[0]).join("")}</span></div><span className="text-sm font-medium text-slate-200">{user.name}</span></div></td>
+                  <td className="px-5 py-3.5 text-sm text-slate-400">{user.email}</td>
+                  <td className={"px-5 py-3.5 text-sm font-medium " + roleColors[user.role]}>{user.role}</td>
+                  <td className="px-5 py-3.5"><span className={"inline-flex px-2.5 py-1 text-xs font-medium rounded-full " + statusStyles[user.status]}>{user.status}</span></td>
+                  <td className="px-5 py-3.5 text-sm text-slate-500">{user.joined}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="flex items-center justify-between px-5 py-3.5 bg-slate-900/40 border-t border-slate-800/60">
+            <p className="text-sm text-slate-500">Showing <span className="text-slate-300 font-medium">1-{filtered.length}</span> of <span className="text-slate-300 font-medium">24</span></p>
+            <div className="flex items-center gap-1.5">
+              <button className="px-3 py-1.5 text-sm text-slate-500 bg-slate-800/50 rounded-md">Previous</button>
+              <button className="px-3 py-1.5 text-sm text-white bg-indigo-600 rounded-md">1</button>
+              <button className="px-3 py-1.5 text-sm text-slate-400 hover:bg-slate-800 rounded-md transition-colors">2</button>
+              <button className="px-3 py-1.5 text-sm text-slate-400 hover:bg-slate-800 rounded-md transition-colors">3</button>
+              <button className="px-3 py-1.5 text-sm text-slate-300 bg-slate-800/50 hover:bg-slate-800 rounded-md transition-colors">Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}`,
+        sortOrder: 1,
+      },
+      // ── Multi-step Checkout Form ──
+      {
+        promptId: checkoutPrompt.id,
+        type: 'code_snippet',
+        content: `export default function MultiStepCheckoutForm() {
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvv, setCvv] = useState("");
+  const [name, setName] = useState("");
+  const steps = [{ num: 1, label: "Shipping", done: true }, { num: 2, label: "Payment", active: true }, { num: 3, label: "Review" }];
+  const items = [{ name: "Wireless Pro Headphones", variant: "Matte Black", price: 249.99, qty: 1 }, { name: "USB-C Charging Cable (2m)", variant: "White", price: 19.99, qty: 2 }];
+  const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const shipping = 9.99; const tax = subtotal * 0.08; const total = subtotal + shipping + tax;
+  return (
+    <div className="min-h-screen bg-[#09090b] flex items-center justify-center p-8">
+      <div className="w-full max-w-4xl">
+        <div className="flex items-center justify-center mb-10">
+          {steps.map((step, i) => (
+            <div key={step.num} className="flex items-center">
+              <div className="flex items-center gap-2.5">
+                <div className={"w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold " + (step.done ? "bg-emerald-500 text-white" : step.active ? "bg-indigo-600 text-white ring-4 ring-indigo-500/20" : "bg-slate-800 text-slate-500")}>{step.done ? "✓" : step.num}</div>
+                <span className={"text-sm font-medium " + (step.done ? "text-emerald-400" : step.active ? "text-white" : "text-slate-500")}>{step.label}</span>
+              </div>
+              {i < steps.length - 1 && <div className={"w-20 h-px mx-4 " + (step.done ? "bg-emerald-500" : "bg-slate-800")} />}
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-5 gap-8">
+          <div className="col-span-3">
+            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-7">
+              <h2 className="text-xl font-semibold text-white mb-1">Payment Details</h2>
+              <p className="text-sm text-slate-500 mb-6">Enter your card information below.</p>
+              <div className="space-y-5">
+                <div><label className="block text-sm font-medium text-slate-300 mb-1.5">Card Number</label><input type="text" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} placeholder="4242 4242 4242 4242" className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all" /></div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div><label className="block text-sm font-medium text-slate-300 mb-1.5">Expiry</label><input type="text" value={expiry} onChange={(e) => setExpiry(e.target.value)} placeholder="MM / YY" className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all" /></div>
+                  <div><label className="block text-sm font-medium text-slate-300 mb-1.5">CVV</label><input type="text" value={cvv} onChange={(e) => setCvv(e.target.value)} placeholder="123" className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all" /></div>
+                </div>
+                <div><label className="block text-sm font-medium text-slate-300 mb-1.5">Cardholder Name</label><input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name on card" className="w-full px-4 py-3 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 transition-all" /></div>
+                <div className="flex gap-3 pt-2">
+                  <button className="px-5 py-3 rounded-xl bg-slate-800 text-slate-300 text-sm font-medium hover:bg-slate-700 transition-colors">Back</button>
+                  <button className="flex-1 px-5 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold transition-colors">Continue to Review</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-span-2">
+            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">Order Summary</h3>
+              <div className="space-y-4 mb-5">{items.map((item, i) => (<div key={i} className="flex gap-3"><div className="w-14 h-14 rounded-xl bg-slate-800 flex items-center justify-center shrink-0"><span className="text-slate-500 text-lg">📦</span></div><div className="flex-1 min-w-0"><p className="text-sm font-medium text-slate-200 truncate">{item.name}</p><p className="text-xs text-slate-500">{item.variant} · Qty {item.qty}</p></div><p className="text-sm font-medium text-slate-300">{"$"+(item.price * item.qty).toFixed(2)}</p></div>))}</div>
+              <div className="border-t border-slate-800 pt-4 space-y-2.5">
+                <div className="flex justify-between text-sm"><span className="text-slate-500">Subtotal</span><span className="text-slate-300">{"$"+subtotal.toFixed(2)}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-slate-500">Shipping</span><span className="text-slate-300">{"$"+shipping.toFixed(2)}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-slate-500">Tax</span><span className="text-slate-300">{"$"+tax.toFixed(2)}</span></div>
+                <div className="border-t border-slate-800 pt-3 flex justify-between"><span className="text-sm font-semibold text-white">Total</span><span className="text-lg font-bold text-white">{"$"+total.toFixed(2)}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}`,
+        sortOrder: 1,
+      },
+      // ── Animated Mesh Background ──
+      {
+        promptId: meshPrompt.id,
+        type: 'code_snippet',
+        content: `export default function AnimatedMeshBackground() {
+  return (
+    <div className="min-h-screen relative overflow-hidden bg-[#09090b]">
+      <style>{\`
+        @keyframes blob1 { 0%, 100% { transform: translate(0%, 0%) scale(1); } 25% { transform: translate(20%, -15%) scale(1.1); } 50% { transform: translate(-10%, 20%) scale(0.95); } 75% { transform: translate(15%, 10%) scale(1.05); } }
+        @keyframes blob2 { 0%, 100% { transform: translate(0%, 0%) scale(1); } 25% { transform: translate(-25%, 15%) scale(1.05); } 50% { transform: translate(15%, -10%) scale(1.1); } 75% { transform: translate(-15%, -20%) scale(0.95); } }
+        @keyframes blob3 { 0%, 100% { transform: translate(0%, 0%) scale(1.05); } 25% { transform: translate(10%, 25%) scale(0.95); } 50% { transform: translate(-20%, -10%) scale(1.1); } 75% { transform: translate(20%, -15%) scale(1); } }
+      \`}</style>
+      <div className="absolute w-[600px] h-[600px] rounded-full opacity-30 blur-[100px]" style={{background: "radial-gradient(circle, #7c3aed 0%, transparent 70%)", top: "10%", left: "15%", animation: "blob1 12s ease-in-out infinite"}} />
+      <div className="absolute w-[500px] h-[500px] rounded-full opacity-25 blur-[100px]" style={{background: "radial-gradient(circle, #2563eb 0%, transparent 70%)", top: "30%", right: "10%", animation: "blob2 15s ease-in-out infinite"}} />
+      <div className="absolute w-[550px] h-[550px] rounded-full opacity-25 blur-[100px]" style={{background: "radial-gradient(circle, #06b6d4 0%, transparent 70%)", bottom: "5%", left: "30%", animation: "blob3 18s ease-in-out infinite"}} />
+      <div className="absolute inset-0" style={{backgroundImage: "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)", backgroundSize: "60px 60px"}} />
+      <div className="absolute inset-0" style={{background: "radial-gradient(ellipse at center, transparent 0%, #09090b 75%)"}} />
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-7xl font-extrabold tracking-tight mb-4 text-center" style={{background: "linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #22d3ee 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"}}>Mesh Gradient</h1>
+        <p className="text-slate-400 text-xl max-w-md text-center leading-relaxed">Dynamic animated backgrounds powered by layered radial gradients</p>
+        <div className="mt-8 flex gap-4">
+          <button className="px-6 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 text-white text-sm font-medium hover:bg-white/15 transition-all">Explore</button>
+          <button className="px-6 py-3 rounded-xl bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-500 transition-colors">Get Started</button>
+        </div>
+      </div>
+    </div>
+  );
+}`,
+        sortOrder: 1,
+      },
+      // ── Team Profile Card Grid ──
+      {
+        promptId: profileGridPrompt.id,
+        type: 'code_snippet',
+        content: `export default function TeamProfileCardGrid() {
+  const team = [
+    { name: "Sarah Chen", role: "CEO & Co-Founder", bio: "Former VP at Stripe. Building the future of developer tooling.", initials: "SC", gradient: "from-violet-600 to-indigo-600", projects: 24, followers: "3.2k", rating: 4.9 },
+    { name: "Marcus Rivera", role: "Head of Engineering", bio: "Systems architect with 12 years at Google and Meta.", initials: "MR", gradient: "from-cyan-500 to-blue-600", projects: 38, followers: "2.8k", rating: 4.8 },
+    { name: "Priya Patel", role: "Lead Designer", bio: "Award-winning product designer. Previously at Figma.", initials: "PP", gradient: "from-pink-500 to-rose-600", projects: 19, followers: "5.1k", rating: 4.9 },
+    { name: "Alex Nakamura", role: "ML Engineer", bio: "PhD in NLP from Stanford. Leading prompt optimization.", initials: "AN", gradient: "from-amber-500 to-orange-600", projects: 15, followers: "1.9k", rating: 4.7 },
+    { name: "Jordan Blake", role: "Full Stack Developer", bio: "Open source contributor and TypeScript enthusiast.", initials: "JB", gradient: "from-emerald-500 to-teal-600", projects: 42, followers: "4.4k", rating: 4.8 },
+    { name: "Elena Vasquez", role: "Product Manager", bio: "Former founder (YC W22). Bridging tech and business.", initials: "EV", gradient: "from-fuchsia-500 to-purple-600", projects: 11, followers: "2.1k", rating: 4.6 },
+  ];
+  return (
+    <div className="min-h-screen bg-[#09090b] p-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-12"><h1 className="text-4xl font-bold text-white mb-3">Meet the Team</h1><p className="text-slate-400 text-lg max-w-2xl mx-auto">The people behind the platform.</p></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {team.map((m) => (
+            <div key={m.name} className="bg-slate-900 rounded-2xl overflow-hidden border border-slate-800/60 hover:scale-[1.02] hover:border-slate-700/60 transition-all duration-300">
+              <div className={"h-24 bg-gradient-to-r " + m.gradient + " relative"}>
+                <div className="absolute -bottom-8 left-6"><div className="w-16 h-16 rounded-xl bg-slate-900 border-4 border-slate-900 flex items-center justify-center shadow-lg"><span className={"text-lg font-bold bg-gradient-to-r " + m.gradient + " bg-clip-text text-transparent"}>{m.initials}</span></div></div>
+              </div>
+              <div className="pt-12 px-6 pb-6">
+                <h3 className="text-lg font-semibold text-white">{m.name}</h3>
+                <p className="text-sm text-indigo-400 font-medium mb-3">{m.role}</p>
+                <p className="text-sm text-slate-400 leading-relaxed mb-5">{m.bio}</p>
+                <div className="flex items-center gap-4 py-4 border-t border-slate-800/60">
+                  <div className="text-center flex-1"><p className="text-lg font-semibold text-white">{m.projects}</p><p className="text-xs text-slate-500">Projects</p></div>
+                  <div className="w-px h-8 bg-slate-800" />
+                  <div className="text-center flex-1"><p className="text-lg font-semibold text-white">{m.followers}</p><p className="text-xs text-slate-500">Followers</p></div>
+                  <div className="w-px h-8 bg-slate-800" />
+                  <div className="text-center flex-1"><p className="text-lg font-semibold text-white">{m.rating}</p><p className="text-xs text-slate-500">Rating</p></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}`,
+        sortOrder: 1,
+      },
+      // ── Stats Overview Dashboard ──
+      {
+        promptId: statsPrompt.id,
+        type: 'code_snippet',
+        content: `export default function StatsOverviewDashboard() {
+  const stats = [
+    { label: "Users", value: "23,412", change: "+12.5%", up: true },
+    { label: "Revenue", value: "$48,295", change: "+8.2%", up: true },
+    { label: "Sessions", value: "1,847", change: "-3.1%", up: false },
+    { label: "Conversion", value: "4.62%", change: "+0.8%", up: true },
+  ];
+  const channels = [
+    { name: "Organic Search", pct: 42, color: "bg-indigo-500", dot: "bg-indigo-400" },
+    { name: "Direct Traffic", pct: 28, color: "bg-cyan-500", dot: "bg-cyan-400" },
+    { name: "Social Media", pct: 18, color: "bg-purple-500", dot: "bg-purple-400" },
+    { name: "Email Campaign", pct: 8, color: "bg-amber-500", dot: "bg-amber-400" },
+    { name: "Referral", pct: 4, color: "bg-emerald-500", dot: "bg-emerald-400" },
+  ];
+  const points = [[0,70],[50,55],[100,62],[150,38],[200,42],[250,25],[300,30],[350,18],[400,22],[450,10],[500,15],[550,8]];
+  const polyline = points.map(function(p) { return p[0]+","+p[1]; }).join(" ");
+  const areaPath = "M0,80 L"+points.map(function(p) { return p[0]+","+p[1]; }).join(" L")+" L550,80 Z";
+  return (
+    <div className="min-h-screen bg-slate-950 p-8">
+      <div className="max-w-6xl mx-auto">
+        <div className="flex items-center justify-between mb-8">
+          <div><h1 className="text-2xl font-bold text-white">Overview</h1><p className="text-sm text-slate-500 mt-1">Platform analytics and performance</p></div>
+          <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-lg px-4 py-2"><span className="text-sm text-slate-300">Mar 1 – Mar 31, 2026</span></div>
+        </div>
+        <div className="grid grid-cols-4 gap-4 mb-6">
+          {stats.map(function(s) { return (
+            <div key={s.label} className="bg-slate-900/70 border border-slate-800/60 rounded-xl p-5">
+              <p className="text-sm text-slate-500 mb-1">{s.label}</p>
+              <div className="flex items-end justify-between">
+                <p className="text-2xl font-bold text-white">{s.value}</p>
+                <span className={"text-sm font-medium px-2 py-0.5 rounded-md " + (s.up ? "text-emerald-400 bg-emerald-500/10" : "text-red-400 bg-red-500/10")}>{s.change}</span>
+              </div>
+            </div>
+          ); })}
+        </div>
+        <div className="grid grid-cols-3 gap-6">
+          <div className="col-span-2 bg-slate-900/70 border border-slate-800/60 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-6"><h3 className="text-lg font-semibold text-white">User Growth</h3></div>
+            <svg viewBox="0 0 550 90" className="w-full h-auto" preserveAspectRatio="none">
+              <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#6366f1" stopOpacity="0.3" /><stop offset="100%" stopColor="#6366f1" stopOpacity="0" /></linearGradient></defs>
+              {[20,40,60].map(function(y) { return React.createElement("line",{key:y,x1:0,y1:y,x2:550,y2:y,stroke:"#1e293b",strokeWidth:"0.5"}); })}
+              <path d={areaPath} fill="url(#cg)" />
+              <polyline points={polyline} fill="none" stroke="#818cf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              {points.map(function(p,i) { return React.createElement("circle",{key:i,cx:p[0],cy:p[1],r:3,fill:"#818cf8",stroke:"#0f172a",strokeWidth:2}); })}
+            </svg>
+          </div>
+          <div className="bg-slate-900/70 border border-slate-800/60 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-6">Top Channels</h3>
+            <div className="space-y-5">
+              {channels.map(function(ch) { return (
+                <div key={ch.name}>
+                  <div className="flex items-center justify-between mb-2"><div className="flex items-center gap-2.5"><div className={"w-2.5 h-2.5 rounded-full " + ch.dot} /><span className="text-sm text-slate-300">{ch.name}</span></div><span className="text-sm font-medium text-slate-400">{ch.pct}%</span></div>
+                  <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden"><div className={"h-full " + ch.color + " rounded-full"} style={{width: ch.pct + "%"}} /></div>
+                </div>
+              ); })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}`,
+        sortOrder: 1,
+      },
     ],
   })
 

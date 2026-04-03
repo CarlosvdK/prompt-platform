@@ -15,7 +15,15 @@ export default async function AgentRunsPage({
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Agent Runs</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Agent Runs</h1>
+        <Link
+          href="/admin/agents/generate"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors"
+        >
+          Generate Components
+        </Link>
+      </div>
 
       {result.data.length === 0 ? (
         <p className="text-muted-foreground text-center py-12">No agent runs found.</p>

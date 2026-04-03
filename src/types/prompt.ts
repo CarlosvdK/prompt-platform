@@ -18,6 +18,8 @@ export interface PromptSummary {
   type: PromptType
   status: PromptStatus
   thumbnailUrl: string | null
+  metadata: Record<string, unknown> | null
+  hasCodePreview: boolean
   category: { id: string; name: string; slug: string }
   tags: { id: string; name: string; slug: string }[]
   viewCount: number

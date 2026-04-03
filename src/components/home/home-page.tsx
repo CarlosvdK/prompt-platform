@@ -213,7 +213,7 @@ export function HomePage({ prompts, categories }: HomePageProps) {
         </header>
 
         {/* ───── HERO SECTION ───── */}
-        <section className="relative min-h-[80vh] flex items-center overflow-hidden pt-28">
+        <section className="relative z-0 min-h-[80vh] flex items-center overflow-hidden pt-28">
           {/* Background blobs */}
           <div
             className="absolute inset-0 pointer-events-none"

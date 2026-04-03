@@ -7,6 +7,7 @@ import { PromptPreview } from '@/components/prompts/prompt-preview'
 import { CodeBlock } from '@/components/shared/code-block'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { PROMPT_TYPE_LABELS } from '@/lib/constants'
+import { PromptTester } from '@/components/admin/prompt-tester'
 
 interface ReviewDetailPageProps {
   params: Promise<{ id: string }>
@@ -60,6 +61,15 @@ export default async function ReviewDetailPage({ params }: ReviewDetailPageProps
           </div>
         </section>
       )}
+
+      {/* Prompt Reproduction Test */}
+      <section className="mb-8">
+        <h2 className="text-lg font-semibold mb-3">Reproduction Test</h2>
+        <PromptTester
+          promptId={prompt.id}
+          originalCode={(prompt.metadata as any)?.previewCode ?? prompt.previews.find((p) => p.type === 'code_snippet')?.content ?? null}
+        />
+      </section>
 
       {/* Review Actions */}
       <section className="mb-8">

@@ -51,6 +51,95 @@ export async function getReviewQueue(
   return { data, total, page, limit, totalPages: Math.ceil(total / limit) }
 }
 
+export async function getReviewQueueWithPreviews(
+  filters: QueueFilters,
+) {
+  const page = filters.page ?? 1
+  const limit = filters.limit ?? 50
+  const status = filters.status ?? 'PENDING_REVIEW'
+
+  const where = { status } as Record<string, unknown>
+
+  const [rawData, total, counts] = await Promise.all([
+    db.prompt.findMany({
+      where,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        type: true,
+        status: true,
+        description: true,
+        content: true,
+        metadata: true,
+        createdAt: true,
+        updatedAt: true,
+        category: { select: { id: true, name: true, slug: true } },
+        previews: {
+          where: { type: 'code_snippet' },
+          select: { id: true, content: true },
+          take: 1,
+        },
+        _count: { select: { reviews: true } },
+      },
+      orderBy: { createdAt: 'asc' },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    db.prompt.count({ where }),
+    // Get counts for all statuses for tab badges
+    Promise.all([
+      db.prompt.count({ where: { status: 'PENDING_REVIEW' } }),
+      db.prompt.count({ where: { status: 'APPROVED' } }),
+      db.prompt.count({ where: { status: 'REJECTED' } }),
+      db.prompt.count({ where: { status: 'NEEDS_CHANGES' } }),
+      db.prompt.count({ where: { status: 'PUBLISHED' } }),
+    ]),
+  ])
+
+  const data = rawData.map((p) => {
+    const meta = p.metadata as Record<string, any> | null
+    return {
+      id: p.id,
+      title: p.title,
+      slug: p.slug,
+      type: p.type,
+      status: p.status,
+      description: p.description,
+      content: p.content,
+      category: p.category,
+      previewCode: meta?.previewCode ?? p.previews[0]?.content ?? null,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt,
+      reviewCount: p._count.reviews,
+    }
+  })
+
+  return {
+    data,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+    statusCounts: {
+      PENDING_REVIEW: counts[0],
+      APPROVED: counts[1],
+      REJECTED: counts[2],
+      NEEDS_CHANGES: counts[3],
+      PUBLISHED: counts[4],
+    },
+  }
+}
+
+export async function getLearningStats() {
+  const [approvedCount, rejectedCount, publishedCount] = await Promise.all([
+    db.reviewDecision.count({ where: { action: 'APPROVED' } }),
+    db.reviewDecision.count({ where: { action: 'REJECTED' } }),
+    db.prompt.count({ where: { status: 'PUBLISHED' } }),
+  ])
+  return { approvedCount, rejectedCount, publishedCount, totalDecisions: approvedCount + rejectedCount }
+}
+
 export async function submitForReview(promptId: string, userId?: string) {
   const prompt = await db.prompt.findUnique({
     where: { id: promptId },
