@@ -1,3 +1,6 @@
+import { readFileSync, existsSync } from 'fs'
+import { join } from 'path'
+
 export interface AgentConfig {
   id: string
   name: string
@@ -6,6 +9,8 @@ export interface AgentConfig {
   /** Extra guidance appended to the base system prompt */
   specialization: string
   exampleTopics: string[]
+  /** Reference files in project root (prompt-examples-*.md) to learn patterns from */
+  referenceFiles: string[]
 }
 
 const BASE_SYSTEM_PROMPT = `You are a senior UI component prompt engineer for Softset. You create structured prompts that produce identical React + Tailwind CSS components when given to ANY large language model.
@@ -23,6 +28,13 @@ Every prompt you create MUST have these sections:
    - Dark mode: component must look great on dark backgrounds (#09090b)
 4. **Expected Output** — The COMPLETE React component code that this prompt should produce. This is the reference implementation.
 
+ORIGINALITY RULES — CRITICAL:
+- You will be given reference examples below. These show the QUALITY LEVEL and LEVEL OF DETAIL expected.
+- NEVER reproduce these examples. Do not copy their layouts, color schemes, text content, or structure.
+- Create ORIGINAL designs with your own creative vision — unique color palettes, novel layouts, fresh interactions.
+- The references are purely for quality calibration: match their specificity (exact Tailwind classes, realistic data, complete code) but invent entirely new components.
+- Think of yourself as a designer who studied great work but creates their own original portfolio.
+
 COMPONENT RULES:
 - Single-file React functional component with default export
 - Tailwind CSS utility classes ONLY — no custom CSS, no CSS modules
@@ -32,6 +44,7 @@ COMPONENT RULES:
 - Must be responsive (mobile-first with breakpoints)
 - Include realistic mock data inline (names, numbers, text)
 - Make it visually impressive — gradients, animations, hover effects
+- Be creative with color choices — don't default to purple/indigo every time
 
 OUTPUT FORMAT — respond with valid JSON only (no markdown fences):
 {
@@ -49,6 +62,7 @@ export const AGENT_CONFIGS: AgentConfig[] = [
     name: 'Landing Page Agent',
     description: 'Hero sections, feature grids, CTAs, testimonial blocks, pricing sections',
     categorySlug: 'landing-pages',
+    referenceFiles: ['prompt-examples.md', 'prompt-examples-clients.md', 'prompt-examples-dashboard.md'],
     specialization: `You specialize in LANDING PAGE components. Focus on:
 - Hero sections with gradient backgrounds, animated elements, compelling headlines
 - Feature grids with icons, descriptions, and visual hierarchy
@@ -70,6 +84,7 @@ Always use min-h-screen layouts. Include floating decorative elements (blurred o
     name: 'Form & Input Agent',
     description: 'Login forms, signup flows, checkout forms, search inputs, multi-step wizards',
     categorySlug: 'forms',
+    referenceFiles: ['prompt-examples.md', 'prompt-examples-toggles.md'],
     specialization: `You specialize in FORM and INPUT components. Focus on:
 - Login/signup cards with glassmorphism, social auth buttons, and validation states
 - Multi-step forms with progress indicators and smooth transitions
@@ -91,6 +106,7 @@ Always include useState for form state. Show focus rings, error states, and hove
     name: 'Dashboard Agent',
     description: 'Analytics dashboards, stat cards, charts, activity feeds, data visualizations',
     categorySlug: 'dashboards',
+    referenceFiles: ['prompt-examples.md', 'prompt-examples-dashboard.md'],
     specialization: `You specialize in DASHBOARD and ANALYTICS components. Focus on:
 - Stat card grids with KPI values, trend indicators (up/down arrows), and sparklines
 - SVG-based charts (line charts with polyline, bar charts with rect, donut charts with circle)
@@ -112,6 +128,7 @@ Use bg-slate-950 backgrounds. Include SVG charts (no external charting libraries
     name: 'Card & Tile Agent',
     description: 'Profile cards, pricing cards, product cards, blog cards, team grids',
     categorySlug: 'cards',
+    referenceFiles: ['prompt-examples.md', 'prompt-examples-borders.md', 'prompt-examples-clients.md'],
     specialization: `You specialize in CARD and TILE components. Focus on:
 - Profile cards with avatar banners, stats rows, social links, and hover lift effects
 - Pricing cards with tier comparison, popular badge, toggle (monthly/yearly)
@@ -133,6 +150,7 @@ Always create multiple cards in a grid layout (grid-cols-1 md:grid-cols-2 lg:gri
     name: 'Navigation Agent',
     description: 'Sidebars, navbars, headers, footers, breadcrumbs, tab bars',
     categorySlug: 'headers',
+    referenceFiles: ['prompt-examples.md', 'prompt-examples-borders.md'],
     specialization: `You specialize in NAVIGATION components. Focus on:
 - Collapsible sidebars with grouped nav items, active indicators, and user avatars
 - Top navigation bars with logo, links, search, and profile dropdown
@@ -154,6 +172,7 @@ Include useState for active/collapsed states. Use border-r or border-b dividers.
     name: 'Feedback & Overlay Agent',
     description: 'Toasts, modals, dialogs, alerts, notifications, tooltips, popovers',
     categorySlug: 'modals',
+    referenceFiles: ['prompt-examples.md', 'prompt-examples-tooltips.md'],
     specialization: `You specialize in FEEDBACK and OVERLAY components. Focus on:
 - Toast notification systems with success/error/warning/info variants, auto-dismiss progress bars
 - Modal dialogs with backdrop blur, close button, and action buttons
@@ -176,11 +195,46 @@ export function getAgentConfig(agentId: string): AgentConfig | undefined {
   return AGENT_CONFIGS.find((a) => a.id === agentId)
 }
 
+/**
+ * Loads reference examples from the prompt-examples-*.md files.
+ * Truncates to stay within token budget (~4000 chars per file).
+ */
+export function loadReferenceExamples(config: AgentConfig): string {
+  const projectRoot = process.cwd()
+  const sections: string[] = []
+
+  for (const file of config.referenceFiles) {
+    const filePath = join(projectRoot, file)
+    if (!existsSync(filePath)) continue
+
+    try {
+      let content = readFileSync(filePath, 'utf-8').trim()
+      if (!content) continue
+
+      // Truncate long files to ~4000 chars to stay within token budget
+      if (content.length > 4000) {
+        content = content.slice(0, 4000) + '\n\n[... truncated for brevity]'
+      }
+
+      sections.push(`--- Reference from ${file} ---\n${content}`)
+    } catch {
+      continue
+    }
+  }
+
+  if (sections.length === 0) return ''
+
+  return `\n\nREFERENCE EXAMPLES (for quality calibration ONLY — never copy these):
+${sections.join('\n\n')}`
+}
+
 export function buildSystemPrompt(config: AgentConfig): string {
+  const references = loadReferenceExamples(config)
+
   return `${BASE_SYSTEM_PROMPT}
 
 SPECIALIZATION:
-${config.specialization}`
+${config.specialization}${references}`
 }
 
 export function getRandomTopic(config: AgentConfig): string {
