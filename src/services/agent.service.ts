@@ -8,7 +8,7 @@ import { logAction } from './audit.service'
 import { submitForReview } from './review.service'
 import { GenerationRequest, AgentRunDetail, AgentRunSummary, PaginatedResult } from '@/types'
 import { logger } from '@/lib/logger'
-import { AGENT_CONFIGS, getAgentConfig, buildSystemPrompt, getRandomTopic } from '@/config/agents'
+import { AGENT_CONFIGS, getAgentConfig, buildSystemPrompt, getRandomTopic, getRandomPalette } from '@/config/agents'
 
 const FALLBACK_SYSTEM_PROMPT = 'You are a prompt engineering expert. Generate a well-structured prompt based on the given parameters. Return a JSON object with title, description, content, previewCode, tags, and categorySlug fields.'
 
@@ -80,8 +80,11 @@ export async function executeGeneration(runId: string) {
       if (input.instructions) parts.push(`Instructions: ${input.instructions}`)
     }
 
+    // Assign a random color palette for variety
+    const palette = getRandomPalette()
+
     const systemPrompt = agentConfig
-      ? buildSystemPrompt(agentConfig)
+      ? buildSystemPrompt(agentConfig, palette)
       : FALLBACK_SYSTEM_PROMPT
 
     const result = await aiProvider.generateCompletion({
@@ -104,7 +107,7 @@ export async function executeGeneration(runId: string) {
       }
     }
 
-    // Build metadata with previewCode, tags, and categorySlug if available
+    // Build metadata with previewCode, tags, categorySlug, and colorPalette
     const metadata: Record<string, unknown> = {}
     if (parsed.previewCode) {
       metadata.previewCode = parsed.previewCode
@@ -115,6 +118,9 @@ export async function executeGeneration(runId: string) {
     if (parsed.categorySlug) {
       metadata.categorySlug = parsed.categorySlug
     }
+    // Store the assigned color palette (from agent or parsed from AI output)
+    const colorId = (parsed as any).colorPalette ?? palette.id
+    metadata.colorPalette = colorId
 
     // Create the draft
     const draft = await db.promptDraft.create({

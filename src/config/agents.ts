@@ -13,6 +13,38 @@ export interface AgentConfig {
   referenceFiles: string[]
 }
 
+export interface ColorPalette {
+  id: string
+  name: string
+  primary: string    // Tailwind color name (e.g., "rose")
+  accent: string     // secondary color
+  preview: string    // hex for UI display
+  tailwindClasses: string // specific classes to guide the agent
+}
+
+export const COLOR_PALETTES: ColorPalette[] = [
+  { id: 'ocean', name: 'Ocean', primary: 'cyan', accent: 'blue', preview: '#06b6d4', tailwindClasses: 'bg-cyan-500, text-cyan-400, from-cyan-600 to-blue-600, bg-cyan-950, border-cyan-500/30' },
+  { id: 'sunset', name: 'Sunset', primary: 'orange', accent: 'rose', preview: '#f97316', tailwindClasses: 'bg-orange-500, text-orange-400, from-orange-600 to-rose-600, bg-orange-950, border-orange-500/30' },
+  { id: 'forest', name: 'Forest', primary: 'emerald', accent: 'teal', preview: '#10b981', tailwindClasses: 'bg-emerald-500, text-emerald-400, from-emerald-600 to-teal-600, bg-emerald-950, border-emerald-500/30' },
+  { id: 'lavender', name: 'Lavender', primary: 'violet', accent: 'purple', preview: '#8b5cf6', tailwindClasses: 'bg-violet-500, text-violet-400, from-violet-600 to-purple-600, bg-violet-950, border-violet-500/30' },
+  { id: 'crimson', name: 'Crimson', primary: 'rose', accent: 'red', preview: '#f43f5e', tailwindClasses: 'bg-rose-500, text-rose-400, from-rose-600 to-red-600, bg-rose-950, border-rose-500/30' },
+  { id: 'amber', name: 'Amber', primary: 'amber', accent: 'yellow', preview: '#f59e0b', tailwindClasses: 'bg-amber-500, text-amber-400, from-amber-600 to-yellow-600, bg-amber-950, border-amber-500/30' },
+  { id: 'sapphire', name: 'Sapphire', primary: 'blue', accent: 'indigo', preview: '#3b82f6', tailwindClasses: 'bg-blue-500, text-blue-400, from-blue-600 to-indigo-600, bg-blue-950, border-blue-500/30' },
+  { id: 'pink', name: 'Pink', primary: 'pink', accent: 'fuchsia', preview: '#ec4899', tailwindClasses: 'bg-pink-500, text-pink-400, from-pink-600 to-fuchsia-600, bg-pink-950, border-pink-500/30' },
+  { id: 'lime', name: 'Lime', primary: 'lime', accent: 'green', preview: '#84cc16', tailwindClasses: 'bg-lime-500, text-lime-400, from-lime-600 to-green-600, bg-lime-950, border-lime-500/30' },
+  { id: 'slate', name: 'Slate', primary: 'slate', accent: 'zinc', preview: '#64748b', tailwindClasses: 'bg-slate-500, text-slate-300, from-slate-600 to-zinc-600, bg-slate-900, border-slate-500/30' },
+  { id: 'coral', name: 'Coral', primary: 'red', accent: 'orange', preview: '#ef4444', tailwindClasses: 'bg-red-500, text-red-400, from-red-500 to-orange-500, bg-red-950, border-red-500/30' },
+  { id: 'sky', name: 'Sky', primary: 'sky', accent: 'cyan', preview: '#0ea5e9', tailwindClasses: 'bg-sky-500, text-sky-400, from-sky-600 to-cyan-600, bg-sky-950, border-sky-500/30' },
+]
+
+export function getRandomPalette(): ColorPalette {
+  return COLOR_PALETTES[Math.floor(Math.random() * COLOR_PALETTES.length)]
+}
+
+export function getPaletteById(id: string): ColorPalette | undefined {
+  return COLOR_PALETTES.find((p) => p.id === id)
+}
+
 const BASE_SYSTEM_PROMPT = `You are a senior UI component prompt engineer for Softset. You create structured prompts that produce identical React + Tailwind CSS components when given to ANY large language model.
 
 PROMPT STRUCTURE REQUIREMENTS:
@@ -228,13 +260,25 @@ export function loadReferenceExamples(config: AgentConfig): string {
 ${sections.join('\n\n')}`
 }
 
-export function buildSystemPrompt(config: AgentConfig): string {
+export function buildSystemPrompt(config: AgentConfig, palette?: ColorPalette): string {
   const references = loadReferenceExamples(config)
+  const colorPalette = palette ?? getRandomPalette()
+
+  const colorDirective = `
+
+COLOR PALETTE — you MUST use this palette for this component:
+- Palette: "${colorPalette.name}" (id: ${colorPalette.id})
+- Primary color: ${colorPalette.primary} (use Tailwind ${colorPalette.primary}-* classes)
+- Accent color: ${colorPalette.accent} (use Tailwind ${colorPalette.accent}-* classes)
+- Example classes: ${colorPalette.tailwindClasses}
+- Use these colors for buttons, accents, gradients, borders, badges, and highlights
+- Background should remain dark (#09090b or slate-950) — the palette colors are for accents and UI elements
+- Include "colorPalette": "${colorPalette.id}" in your JSON output alongside the other fields`
 
   return `${BASE_SYSTEM_PROMPT}
 
 SPECIALIZATION:
-${config.specialization}${references}`
+${config.specialization}${colorDirective}${references}`
 }
 
 export function getRandomTopic(config: AgentConfig): string {

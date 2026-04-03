@@ -18,6 +18,7 @@ export function HomePage({ prompts, categories }: HomePageProps) {
   const featuredRef = useRef<HTMLDivElement>(null)
   const [pastHero, setPastHero] = useState(false)
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
+  const [activeColor, setActiveColor] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set())
@@ -66,12 +67,44 @@ export function HomePage({ prompts, categories }: HomePageProps) {
     if (activeFilter) {
       result = result.filter((p) => p.category.slug === activeFilter)
     }
+    if (activeColor) {
+      result = result.filter((p) => {
+        const meta = p.metadata as Record<string, any> | null
+        return meta?.colorPalette === activeColor
+      })
+    }
     if (debouncedSearch) {
       const q = debouncedSearch.toLowerCase()
       result = result.filter((p) => p.title.toLowerCase().includes(q))
     }
     return result
-  }, [prompts, activeFilter, debouncedSearch])
+  }, [prompts, activeFilter, activeColor, debouncedSearch])
+
+  // Get available color palettes from prompts
+  const availableColors = useMemo(() => {
+    const colorMap: Record<string, { id: string; preview: string; name: string }> = {
+      ocean: { id: 'ocean', preview: '#06b6d4', name: 'Ocean' },
+      sunset: { id: 'sunset', preview: '#f97316', name: 'Sunset' },
+      forest: { id: 'forest', preview: '#10b981', name: 'Forest' },
+      lavender: { id: 'lavender', preview: '#8b5cf6', name: 'Lavender' },
+      crimson: { id: 'crimson', preview: '#f43f5e', name: 'Crimson' },
+      amber: { id: 'amber', preview: '#f59e0b', name: 'Amber' },
+      sapphire: { id: 'sapphire', preview: '#3b82f6', name: 'Sapphire' },
+      pink: { id: 'pink', preview: '#ec4899', name: 'Pink' },
+      lime: { id: 'lime', preview: '#84cc16', name: 'Lime' },
+      slate: { id: 'slate', preview: '#64748b', name: 'Slate' },
+      coral: { id: 'coral', preview: '#ef4444', name: 'Coral' },
+      sky: { id: 'sky', preview: '#0ea5e9', name: 'Sky' },
+    }
+    const found = new Set<string>()
+    prompts.forEach((p) => {
+      const meta = p.metadata as Record<string, any> | null
+      if (meta?.colorPalette && colorMap[meta.colorPalette]) {
+        found.add(meta.colorPalette)
+      }
+    })
+    return Array.from(found).map((id) => colorMap[id]).filter(Boolean)
+  }, [prompts])
 
   const scrollToBrowse = useCallback(() => {
     featuredRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -183,6 +216,29 @@ export function HomePage({ prompts, categories }: HomePageProps) {
                 {cat.name}
               </button>
             ))}
+
+            {/* Color filter */}
+            {availableColors.length > 0 && (
+              <>
+                <span
+                  className="shrink-0 w-px h-5 self-center"
+                  style={{ background: 'rgba(255,255,255,0.08)' }}
+                />
+                {availableColors.map((color) => (
+                  <button
+                    key={color.id}
+                    onClick={() => setActiveColor(activeColor === color.id ? null : color.id)}
+                    title={color.name}
+                    className={`shrink-0 w-7 h-7 rounded-full transition-all duration-200 ${
+                      activeColor === color.id
+                        ? 'ring-2 ring-white ring-offset-2 ring-offset-[#08090d] scale-110'
+                        : 'hover:scale-110 opacity-70 hover:opacity-100'
+                    }`}
+                    style={{ backgroundColor: color.preview }}
+                  />
+                ))}
+              </>
+            )}
 
             {/* Divider */}
             <span
