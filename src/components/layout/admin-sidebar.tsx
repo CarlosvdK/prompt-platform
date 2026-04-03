@@ -10,6 +10,7 @@ import {
   BarChart3,
   ScrollText,
   Settings,
+  Brain,
   type LucideIcon,
 } from 'lucide-react'
 import { adminNavItems } from '@/config/navigation'
@@ -24,6 +25,7 @@ const iconMap: Record<string, LucideIcon> = {
   BarChart3,
   ScrollText,
   Settings,
+  Brain,
 }
 
 export function AdminSidebar({ className }: { className?: string }) {

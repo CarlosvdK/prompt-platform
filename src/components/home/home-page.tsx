@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
-import { Search, User } from 'lucide-react'
+import { Search, User, Brain } from 'lucide-react'
 import { HeroDemo } from '@/components/home/hero-demo'
 import { PromptCard } from '@/components/prompts/prompt-card'
 import { PromptModalProvider } from '@/components/prompts/prompt-modal-provider'
@@ -183,6 +183,32 @@ export function HomePage({ prompts, categories }: HomePageProps) {
                 {cat.name}
               </button>
             ))}
+
+            {/* Divider */}
+            <span
+              className="shrink-0 w-px h-5 self-center"
+              style={{ background: 'rgba(255,255,255,0.08)' }}
+            />
+
+            {/* Training — admin only */}
+            <Link
+              href="/admin/training"
+              className="shrink-0 flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all duration-200"
+              style={{
+                background: 'rgba(102,126,234,0.1)',
+                border: '1px solid rgba(102,126,234,0.2)',
+                color: '#a5b4fc',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(102,126,234,0.18)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(102,126,234,0.1)'
+              }}
+            >
+              <Brain className="h-3.5 w-3.5" />
+              Training
+            </Link>
           </div>
         </header>
 
