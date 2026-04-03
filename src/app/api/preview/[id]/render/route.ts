@@ -105,6 +105,20 @@ function generatePreviewHTML(componentCode: string): string {
     });
     window.require = m => m==='react'?React:m==='lucide-react'?lucideProxy:{};
 
+    // Block navigation while keeping visual interactions
+    document.addEventListener('click', function(e) {
+      var el = e.target;
+      while (el && el !== document) {
+        if (el.tagName === 'A' && el.getAttribute('href')) {
+          e.preventDefault();
+          return;
+        }
+        el = el.parentElement;
+      }
+    }, true);
+    document.addEventListener('submit', function(e) { e.preventDefault(); }, true);
+    window.addEventListener('beforeunload', function(e) { e.preventDefault(); });
+
     window.addEventListener('load', function() {
       try {
         const src = atob('${encoded}');

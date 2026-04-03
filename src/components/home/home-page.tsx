@@ -115,12 +115,7 @@ export function HomePage({ prompts, categories }: HomePageProps) {
       <div className="min-h-screen" style={{ background: '#08090d' }}>
         {/* ───── FIXED TOP HEADER ───── */}
         <header
-          className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
-          style={{
-            background: pastHero ? 'rgba(8,9,13,0.95)' : 'transparent',
-            backdropFilter: pastHero ? 'blur(24px)' : 'none',
-            borderBottom: pastHero ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
-          }}
+          className="fixed top-0 left-0 right-0 z-50 bg-[#08090d] border-b border-white/[0.06]"
         >
           {/* Top row */}
           <div className="flex items-center justify-between px-4 md:px-8 py-3">
